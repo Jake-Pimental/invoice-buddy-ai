@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Header from "@/components/Header";
@@ -133,6 +132,14 @@ const Index = () => {
     // Close the assistant
     handleAssistantClose();
   };
+  
+  const handleUploadComplete = () => {
+    setIsUploadOpen(false);
+    toast({
+      title: "Success",
+      description: "Invoice uploaded successfully.",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -152,7 +159,10 @@ const Index = () => {
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogTrigger className="hidden" />
         <DialogContent className="sm:max-w-[500px]">
-          <UploadInvoice onClose={handleUploadClose} />
+          <UploadInvoice 
+            onClose={handleUploadClose}
+            onUploadComplete={handleUploadComplete}
+          />
         </DialogContent>
       </Dialog>
       
