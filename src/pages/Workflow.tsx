@@ -514,7 +514,7 @@ const WorkflowPage = () => {
                                 onChange={(e) => setNewStep({...newStep, messageTemplate: e.target.value})}
                               />
                               <p className="text-xs text-muted-foreground">
-                                Available variables: {{clientName}}, {{invoiceNumber}}, {{amount}}, {{dueDate}}, {{companyName}}
+                                Available variables: {'{'}{'{'}}clientName{'}'}{'}'}, {'{'}{'{'}}invoiceNumber{'}'}{'}'}, {'{'}{'{'}}amount{'}'}{'}'}, {'{'}{'{'}}dueDate{'}'}{'}'}, {'{'}{'{'}}companyName{'}'}{'}'}
                               </p>
                             </div>
                           </div>
