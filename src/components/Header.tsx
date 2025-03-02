@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -29,6 +30,13 @@ interface HeaderProps {
 const Header = ({ onUploadClick }: HeaderProps) => {
   const isMobile = useIsMobile();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === "/" && location.pathname === "/") return true;
+    if (path !== "/" && location.pathname.startsWith(path)) return true;
+    return false;
+  };
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-gray-100 bg-white/80 backdrop-blur-sm">
@@ -46,36 +54,48 @@ const Header = ({ onUploadClick }: HeaderProps) => {
             </Button>
           )}
           
-          <div className="font-semibold text-xl tracking-tight mr-4 text-blue-600">
+          <Link to="/" className="font-semibold text-xl tracking-tight mr-4 text-blue-600">
             InvoiceAI
-          </div>
+          </Link>
           
           {!isMobile && (
             <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-              <a
-                href="#"
-                className="text-gray-600 transition-colors hover:text-blue-600"
+              <Link
+                to="/"
+                className={cn(
+                  "transition-colors hover:text-blue-600",
+                  isActive("/") ? "text-blue-600" : "text-gray-600"
+                )}
               >
                 Dashboard
-              </a>
-              <a
-                href="#"
-                className="text-gray-600 transition-colors hover:text-blue-600"
+              </Link>
+              <Link
+                to="/invoices"
+                className={cn(
+                  "transition-colors hover:text-blue-600",
+                  isActive("/invoices") ? "text-blue-600" : "text-gray-600"
+                )}
               >
                 Invoices
-              </a>
-              <a
-                href="#"
-                className="text-gray-600 transition-colors hover:text-blue-600"
+              </Link>
+              <Link
+                to="/clients"
+                className={cn(
+                  "transition-colors hover:text-blue-600",
+                  isActive("/clients") ? "text-blue-600" : "text-gray-600"
+                )}
               >
                 Clients
-              </a>
-              <a
-                href="#"
-                className="text-gray-600 transition-colors hover:text-blue-600"
+              </Link>
+              <Link
+                to="/analytics"
+                className={cn(
+                  "transition-colors hover:text-blue-600",
+                  isActive("/analytics") ? "text-blue-600" : "text-gray-600"
+                )}
               >
                 Analytics
-              </a>
+              </Link>
             </div>
           )}
         </div>
@@ -150,30 +170,46 @@ const Header = ({ onUploadClick }: HeaderProps) => {
       {isMobile && isMobileMenuOpen && (
         <div className="md:hidden border-t border-gray-100 animate-slide-down">
           <div className="space-y-1 px-4 py-3">
-            <a
-              href="#"
-              className="block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50"
+            <Link
+              to="/"
+              className={cn(
+                "block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50",
+                isActive("/") ? "text-blue-600 bg-blue-50" : ""
+              )}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Dashboard
-            </a>
-            <a
-              href="#"
-              className="block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50"
+            </Link>
+            <Link
+              to="/invoices"
+              className={cn(
+                "block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50",
+                isActive("/invoices") ? "text-blue-600 bg-blue-50" : ""
+              )}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Invoices
-            </a>
-            <a
-              href="#"
-              className="block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50"
+            </Link>
+            <Link
+              to="/clients"
+              className={cn(
+                "block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50",
+                isActive("/clients") ? "text-blue-600 bg-blue-50" : ""
+              )}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Clients
-            </a>
-            <a
-              href="#"
-              className="block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50"
+            </Link>
+            <Link
+              to="/analytics"
+              className={cn(
+                "block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50",
+                isActive("/analytics") ? "text-blue-600 bg-blue-50" : ""
+              )}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Analytics
-            </a>
+            </Link>
             <div className="relative mt-3">
               <SearchIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
               <input
@@ -183,7 +219,10 @@ const Header = ({ onUploadClick }: HeaderProps) => {
               />
             </div>
             <Button
-              onClick={onUploadClick}
+              onClick={() => {
+                onUploadClick();
+                setIsMobileMenuOpen(false);
+              }}
               className="w-full mt-3"
             >
               Upload Invoice

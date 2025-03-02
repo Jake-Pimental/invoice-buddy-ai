@@ -1,221 +1,170 @@
 
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Header from "@/components/Header";
 import Dashboard from "@/components/Dashboard";
 import InvoiceList from "@/components/InvoiceList";
-import UploadInvoice from "@/components/UploadInvoice";
 import AIAssistant from "@/components/AIAssistant";
-import { Invoice, AIMessage, DashboardStats } from "@/types";
-import { useToast } from "@/hooks/use-toast";
-import { format, subDays, addDays } from "date-fns";
+import UploadInvoice from "@/components/UploadInvoice";
+import { DashboardStats, Invoice, AIMessage } from "@/types";
+import { toast } from "@/components/ui/use-toast";
+
+const MOCK_INVOICES: Invoice[] = [
+  {
+    id: "inv-001",
+    clientName: "Acme Corporation",
+    amount: 5600,
+    dueDate: "2023-08-15",
+    status: "overdue",
+    issueDate: "2023-07-15",
+    invoiceNumber: "INV-2023-001",
+    clientEmail: "billing@acmecorp.com",
+    clientPhone: "555-123-4567",
+    description: "Website Development Services",
+    remindersSent: 2,
+    lastContactDate: "2023-08-20",
+    notes: "Client requested payment extension until end of month."
+  },
+  {
+    id: "inv-002",
+    clientName: "TechStart Inc.",
+    amount: 3200,
+    dueDate: "2023-09-01",
+    status: "pending",
+    issueDate: "2023-08-01",
+    invoiceNumber: "INV-2023-002",
+    clientEmail: "accounts@techstart.io",
+    description: "Monthly Consulting Retainer",
+    remindersSent: 1,
+    lastContactDate: "2023-08-25"
+  },
+  {
+    id: "inv-003",
+    clientName: "Global Designs",
+    amount: 1800,
+    dueDate: "2023-08-20",
+    status: "paid",
+    issueDate: "2023-07-20",
+    invoiceNumber: "INV-2023-003",
+    clientEmail: "finance@globaldesigns.com",
+    clientPhone: "555-987-6543",
+    description: "Logo Design and Branding Package",
+    remindersSent: 0
+  },
+  {
+    id: "inv-004",
+    clientName: "City Services Ltd.",
+    amount: 4250,
+    dueDate: "2023-08-30",
+    status: "partial",
+    issueDate: "2023-07-30",
+    invoiceNumber: "INV-2023-004",
+    clientEmail: "ap@cityservices.net",
+    description: "Maintenance Contract Q3",
+    remindersSent: 0
+  }
+];
+
+const MOCK_MESSAGES: AIMessage[] = [
+  {
+    id: "msg-001",
+    invoiceId: "inv-001",
+    content: "Hello Acme Corporation, I hope this message finds you well. I wanted to follow up on invoice #INV-2023-001 for $5,600 which was due on August 15th. Please let me know if there's anything I can help with to facilitate the payment process.",
+    sentiment: "friendly",
+    createdAt: "2023-08-16",
+    deliveryStatus: "delivered"
+  },
+  {
+    id: "msg-002",
+    invoiceId: "inv-001",
+    content: "Hi Acme Corporation, this is a gentle reminder about your outstanding payment for invoice #INV-2023-001 for $5,600. It's now 5 days past the due date of August 15th. Could you please provide an update on when we might expect payment?",
+    sentiment: "friendly",
+    createdAt: "2023-08-20",
+    deliveryStatus: "delivered"
+  },
+  {
+    id: "msg-003",
+    invoiceId: "inv-002",
+    content: "Hello TechStart Inc., I hope you're doing well. This is a friendly reminder that invoice #INV-2023-002 for $3,200 is due on September 1st. Please let me know if you have any questions about the invoice.",
+    sentiment: "friendly",
+    createdAt: "2023-08-25",
+    deliveryStatus: "delivered"
+  }
+];
+
+const MOCK_STATS: DashboardStats = {
+  totalUnpaid: 13050,
+  totalOverdue: 5600,
+  totalCollected: 7250,
+  collectionRate: 78,
+  averagePaymentTime: 32
+};
 
 const Index = () => {
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [showAIDialog, setShowAIDialog] = useState(false);
-  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | undefined>();
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [messageHistory, setMessageHistory] = useState<AIMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
-  // Dashboard stats
-  const [stats, setStats] = useState<DashboardStats>({
-    totalUnpaid: 0,
-    totalOverdue: 0,
-    totalCollected: 37500,
-    collectionRate: 78,
-    averagePaymentTime: 32,
-  });
-
-  useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      const mockInvoices: Invoice[] = [
-        {
-          id: "inv-001",
-          clientName: "Acme Corporation",
-          amount: 12500,
-          issueDate: format(subDays(new Date(), 30), "yyyy-MM-dd"),
-          dueDate: format(subDays(new Date(), 5), "yyyy-MM-dd"),
-          status: "overdue",
-          invoiceNumber: "INV-2023-001",
-          clientEmail: "billing@acmecorp.com",
-          description: "Web development services",
-          remindersSent: 2,
-          lastContactDate: format(subDays(new Date(), 3), "yyyy-MM-dd"),
-        },
-        {
-          id: "inv-002",
-          clientName: "Globex Industries",
-          amount: 8750,
-          issueDate: format(subDays(new Date(), 20), "yyyy-MM-dd"),
-          dueDate: format(addDays(new Date(), 10), "yyyy-MM-dd"),
-          status: "pending",
-          invoiceNumber: "INV-2023-002",
-          clientEmail: "accounts@globex.com",
-          description: "UI/UX design project",
-          remindersSent: 1,
-          lastContactDate: format(subDays(new Date(), 7), "yyyy-MM-dd"),
-        },
-        {
-          id: "inv-003",
-          clientName: "Stark Enterprises",
-          amount: 15000,
-          issueDate: format(subDays(new Date(), 45), "yyyy-MM-dd"),
-          dueDate: format(subDays(new Date(), 15), "yyyy-MM-dd"),
-          status: "partial",
-          invoiceNumber: "INV-2023-003",
-          clientEmail: "finance@stark.com",
-          description: "Mobile app development",
-          remindersSent: 3,
-          lastContactDate: format(subDays(new Date(), 2), "yyyy-MM-dd"),
-          notes: "Client has committed to paying remainder by end of month",
-        },
-        {
-          id: "inv-004",
-          clientName: "Wayne Industries",
-          amount: 5200,
-          issueDate: format(subDays(new Date(), 25), "yyyy-MM-dd"),
-          dueDate: format(addDays(new Date(), 5), "yyyy-MM-dd"),
-          status: "pending",
-          invoiceNumber: "INV-2023-004",
-          clientEmail: "ap@wayne.com",
-          description: "Consulting services",
-          remindersSent: 0,
-        },
-        {
-          id: "inv-005",
-          clientName: "Oscorp",
-          amount: 9000,
-          issueDate: format(subDays(new Date(), 60), "yyyy-MM-dd"),
-          dueDate: format(subDays(new Date(), 30), "yyyy-MM-dd"),
-          status: "paid",
-          invoiceNumber: "INV-2023-005",
-          clientEmail: "payments@oscorp.com",
-          description: "Software licensing",
-          remindersSent: 2,
-          lastContactDate: format(subDays(new Date(), 25), "yyyy-MM-dd"),
-          notes: "Paid in full after 2nd reminder",
-        },
-      ];
-
-      setInvoices(mockInvoices);
-      
-      // Update stats based on invoices
-      const unpaidInvoices = mockInvoices.filter(inv => inv.status !== 'paid');
-      const overdueInvoices = mockInvoices.filter(inv => inv.status === 'overdue');
-      
-      setStats({
-        ...stats,
-        totalUnpaid: unpaidInvoices.reduce((sum, inv) => sum + inv.amount, 0),
-        totalOverdue: overdueInvoices.reduce((sum, inv) => sum + inv.amount, 0),
-      });
-      
-      // Mock message history
-      const mockMessages: AIMessage[] = [
-        {
-          id: "msg-001",
-          invoiceId: "inv-001",
-          content: "Hi Acme Corporation, this is a friendly reminder that invoice INV-2023-001 for $12,500 is now overdue. Please let us know when we can expect payment.",
-          sentiment: "friendly",
-          createdAt: format(subDays(new Date(), 3), "yyyy-MM-dd'T'HH:mm:ss"),
-          deliveryStatus: "delivered",
-        },
-        {
-          id: "msg-002",
-          invoiceId: "inv-002",
-          content: "Hello Globex Industries, just a reminder that invoice INV-2023-002 for $8,750 is due in 10 days. Please let me know if you have any questions.",
-          sentiment: "neutral",
-          createdAt: format(subDays(new Date(), 7), "yyyy-MM-dd'T'HH:mm:ss"),
-          deliveryStatus: "delivered",
-        },
-      ];
-      
-      setMessageHistory(mockMessages);
-      setIsLoading(false);
-    }, 1500);
-  }, []);
-
-  const handleOpenUploadDialog = () => {
-    setShowUploadDialog(true);
+  const handleUploadClick = () => {
+    setIsUploadOpen(true);
   };
 
-  const handleCloseUploadDialog = () => {
-    setShowUploadDialog(false);
-  };
-
-  const handleUploadComplete = () => {
-    toast({
-      description: "Invoice added to your collection queue",
-    });
-    
-    // In a real app, we'd add the new invoice to the list
-    // Here we'll just simulate it for demo purposes
-    setTimeout(() => {
-      const newInvoice: Invoice = {
-        id: `inv-00${invoices.length + 1}`,
-        clientName: "New Client Inc.",
-        amount: 3200,
-        issueDate: format(new Date(), "yyyy-MM-dd"),
-        dueDate: format(addDays(new Date(), 30), "yyyy-MM-dd"),
-        status: "pending",
-        invoiceNumber: `INV-2023-00${invoices.length + 1}`,
-        clientEmail: "billing@newclient.com",
-        description: "Professional services",
-        remindersSent: 0,
-      };
-      
-      setInvoices([...invoices, newInvoice]);
-      
-      // Update stats
-      setStats({
-        ...stats,
-        totalUnpaid: stats.totalUnpaid + newInvoice.amount,
-      });
-    }, 500);
+  const handleUploadClose = () => {
+    setIsUploadOpen(false);
   };
 
   const handleSendReminder = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
-    setShowAIDialog(true);
+    setIsAIAssistantOpen(true);
+  };
+
+  const handleAssistantClose = () => {
+    setIsAIAssistantOpen(false);
+    setSelectedInvoice(null);
+  };
+
+  const handleSendMessage = (message: Omit<AIMessage, "id" | "createdAt">) => {
+    // In a real app, this would send the message to the server
+    toast({
+      title: "Message sent",
+      description: "Your message has been queued for delivery.",
+    });
+    
+    // Close the assistant
+    handleAssistantClose();
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50/50">
-      <Header onUploadClick={handleOpenUploadDialog} />
+    <div className="min-h-screen bg-gray-50">
+      <Header onUploadClick={handleUploadClick} />
       
-      <main className="flex-1 container mx-auto px-4 py-6 md:px-6 md:py-8 animate-fade-in">
-        <div className="space-y-8">
-          <Dashboard stats={stats} />
-          
-          <InvoiceList 
-            invoices={invoices} 
-            onUploadClick={handleOpenUploadDialog}
-            onSendReminder={handleSendReminder}
-          />
-        </div>
+      <main className="container mx-auto px-4 py-8 space-y-8">
+        <Dashboard stats={MOCK_STATS} />
+        
+        <InvoiceList 
+          invoices={MOCK_INVOICES} 
+          onUploadClick={handleUploadClick}
+          onSendReminder={handleSendReminder}
+        />
       </main>
       
-      {/* Upload Invoice Dialog */}
-      <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
-        <DialogContent className="sm:max-w-xl p-0" showCloseButton={false}>
-          <UploadInvoice 
-            onClose={handleCloseUploadDialog}
-            onUploadComplete={handleUploadComplete}
-          />
+      {/* Upload Dialog */}
+      <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+        <DialogTrigger className="hidden" />
+        <DialogContent className="sm:max-w-[500px]">
+          <UploadInvoice onClose={handleUploadClose} />
         </DialogContent>
       </Dialog>
       
       {/* AI Assistant Dialog */}
-      <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
-        <DialogContent className="sm:max-w-3xl p-0" showCloseButton={false}>
+      <Dialog open={isAIAssistantOpen} onOpenChange={setIsAIAssistantOpen}>
+        <DialogTrigger className="hidden" />
+        <DialogContent className="sm:max-w-[600px]">
           <AIAssistant 
             invoice={selectedInvoice}
-            messageHistory={messageHistory.filter(
-              msg => msg.invoiceId === selectedInvoice?.id
-            )}
-            onClose={() => setShowAIDialog(false)}
+            previousMessages={selectedInvoice ? MOCK_MESSAGES.filter(msg => msg.invoiceId === selectedInvoice.id) : []}
+            onClose={handleAssistantClose}
+            onSendMessage={handleSendMessage}
           />
         </DialogContent>
       </Dialog>
