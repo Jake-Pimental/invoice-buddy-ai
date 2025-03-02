@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -95,6 +94,15 @@ const Header = ({ onUploadClick }: HeaderProps) => {
                 )}
               >
                 Analytics
+              </Link>
+              <Link
+                to="/workflow"
+                className={cn(
+                  "transition-colors hover:text-blue-600",
+                  isActive("/workflow") ? "text-blue-600" : "text-gray-600"
+                )}
+              >
+                Workflow
               </Link>
             </div>
           )}
@@ -209,6 +217,16 @@ const Header = ({ onUploadClick }: HeaderProps) => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Analytics
+            </Link>
+            <Link
+              to="/workflow"
+              className={cn(
+                "block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50",
+                isActive("/workflow") ? "text-blue-600 bg-blue-50" : ""
+              )}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Workflow
             </Link>
             <div className="relative mt-3">
               <SearchIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
