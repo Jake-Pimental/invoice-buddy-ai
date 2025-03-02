@@ -123,13 +123,11 @@ const Index = () => {
   };
 
   const handleSendMessage = (message: Omit<AIMessage, "id" | "createdAt">) => {
-    // In a real app, this would send the message to the server
     toast({
       title: "Message sent",
       description: "Your message has been queued for delivery.",
     });
     
-    // Close the assistant
     handleAssistantClose();
   };
   
@@ -155,7 +153,6 @@ const Index = () => {
         />
       </main>
       
-      {/* Upload Dialog */}
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogTrigger className="hidden" />
         <DialogContent className="sm:max-w-[500px]">
@@ -166,7 +163,6 @@ const Index = () => {
         </DialogContent>
       </Dialog>
       
-      {/* AI Assistant Dialog */}
       <Dialog open={isAIAssistantOpen} onOpenChange={setIsAIAssistantOpen}>
         <DialogTrigger className="hidden" />
         <DialogContent className="sm:max-w-[600px]">

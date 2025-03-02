@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,13 +23,14 @@ import { BrainIcon, SendIcon, RefreshCcwIcon, ClipboardCheckIcon } from "lucide-
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-interface AIAssistantProps {
-  invoice?: Invoice;
-  messageHistory?: AIMessage[];
+export interface AIAssistantProps {
+  invoice?: Invoice | null;
+  previousMessages?: AIMessage[];
   onClose: () => void;
+  onSendMessage?: (message: Omit<AIMessage, "id" | "createdAt">) => void;
 }
 
-const AIAssistant = ({ invoice, messageHistory = [], onClose }: AIAssistantProps) => {
+const AIAssistant = ({ invoice, previousMessages = [], onClose, onSendMessage }: AIAssistantProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [tone, setTone] = useState<string>("friendly");
@@ -39,7 +39,6 @@ const AIAssistant = ({ invoice, messageHistory = [], onClose }: AIAssistantProps
 
   useEffect(() => {
     if (invoice) {
-      // In a real app, we'd generate these with the AI
       setSuggestions([
         `Hi ${invoice.clientName}, just a friendly reminder that invoice #${invoice.invoiceNumber} for $${invoice.amount} is due on ${new Date(invoice.dueDate).toLocaleDateString()}. Please let me know if you have any questions.`,
         `${invoice.clientName}, your payment for invoice #${invoice.invoiceNumber} ($${invoice.amount}) is now overdue. Please arrange payment at your earliest convenience.`,
@@ -53,7 +52,6 @@ const AIAssistant = ({ invoice, messageHistory = [], onClose }: AIAssistantProps
     
     setIsLoading(true);
     
-    // Simulate AI generation
     setTimeout(() => {
       let generatedMessage = "";
       
@@ -86,8 +84,16 @@ const AIAssistant = ({ invoice, messageHistory = [], onClose }: AIAssistantProps
     
     setIsLoading(true);
     
-    // Simulate sending
     setTimeout(() => {
+      if (onSendMessage && invoice) {
+        onSendMessage({
+          invoiceId: invoice.id,
+          content: message,
+          sentiment: tone as 'neutral' | 'friendly' | 'firm' | 'urgent',
+          deliveryStatus: 'sent'
+        });
+      }
+      
       toast({
         description: "Message scheduled for delivery",
       });
@@ -220,7 +226,7 @@ const AIAssistant = ({ invoice, messageHistory = [], onClose }: AIAssistantProps
           </div>
         )}
         
-        {messageHistory.length > 0 && (
+        {previousMessages.length > 0 && (
           <div className="mt-4">
             <div className="flex items-center my-3">
               <Separator className="flex-1" />
@@ -228,7 +234,7 @@ const AIAssistant = ({ invoice, messageHistory = [], onClose }: AIAssistantProps
               <Separator className="flex-1" />
             </div>
             <div className="space-y-2">
-              {messageHistory.map((msg) => (
+              {previousMessages.map((msg) => (
                 <div key={msg.id} className="text-sm p-3 border rounded-lg bg-gray-50">
                   <div className="flex justify-between items-start mb-1">
                     <span className="text-xs text-gray-500">

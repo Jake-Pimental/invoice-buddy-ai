@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { PlusCircle, ArrowRight, Clock, Mail, MessageSquare, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -152,7 +151,6 @@ const WorkflowPage = () => {
     });
     setIsNewWorkflowOpen(false);
     
-    // Select the newly created workflow
     setSelectedWorkflow(workflowToAdd);
     
     toast({
@@ -278,6 +276,17 @@ const WorkflowPage = () => {
     } else {
       return `${days} days after due date`;
     }
+  };
+
+  const renderPlaceholder = (placeholder: string) => {
+    return (
+      <span 
+        key={placeholder}
+        className="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-xs font-medium"
+      >
+        {placeholder}
+      </span>
+    );
   };
 
   return (

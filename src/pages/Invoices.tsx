@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -145,10 +144,8 @@ const Invoices = () => {
 
   const handleSortChange = (field: 'dueDate' | 'amount' | 'clientName') => {
     if (sortBy === field) {
-      // Toggle direction if the same field is clicked
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
-      // Set new sort field and default to ascending
       setSortBy(field);
       setSortDirection('asc');
     }
@@ -156,12 +153,10 @@ const Invoices = () => {
 
   const filteredInvoices = MOCK_INVOICES
     .filter(invoice => {
-      // Filter by active tab
       if (activeTab === "all") return true;
       return invoice.status === activeTab;
     })
     .filter(invoice => {
-      // Filter by search query
       if (!searchQuery) return true;
       const lowerQuery = searchQuery.toLowerCase();
       return (
@@ -192,6 +187,13 @@ const Invoices = () => {
     setIsUploadOpen(false);
   };
 
+  const handleUploadComplete = () => {
+    toast({
+      title: "Upload complete",
+      description: "Your invoice has been uploaded successfully.",
+    });
+  };
+
   const handleSendReminder = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
     setIsAIAssistantOpen(true);
@@ -203,13 +205,11 @@ const Invoices = () => {
   };
 
   const handleSendMessage = (message: Omit<AIMessage, "id" | "createdAt">) => {
-    // In a real app, this would send the message to the server
     toast({
       title: "Message sent",
       description: "Your message has been queued for delivery.",
     });
     
-    // Close the assistant
     handleAssistantClose();
   };
 
@@ -475,15 +475,16 @@ const Invoices = () => {
         </Card>
       </main>
       
-      {/* Upload Dialog */}
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogTrigger className="hidden" />
         <DialogContent className="sm:max-w-[500px]">
-          <UploadInvoice onClose={handleUploadClose} />
+          <UploadInvoice 
+            onClose={handleUploadClose}
+            onUploadComplete={handleUploadComplete}
+          />
         </DialogContent>
       </Dialog>
       
-      {/* AI Assistant Dialog */}
       <Dialog open={isAIAssistantOpen} onOpenChange={setIsAIAssistantOpen}>
         <DialogTrigger className="hidden" />
         <DialogContent className="sm:max-w-[600px]">
