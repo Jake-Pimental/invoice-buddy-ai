@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Invoice } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +28,7 @@ import {
   AlertCircleIcon,
   CheckCircleIcon,
   ClockIcon,
+  Eye,
 } from "lucide-react";
 import { format, isPast, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -164,18 +166,20 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center">
                         <div className="mb-2 sm:mb-0 sm:mr-6">
-                          <h3 className="font-medium truncate max-w-[200px] sm:max-w-[300px]">
-                            {invoice.clientName}
-                          </h3>
-                          <div className="flex items-center text-sm text-gray-500 mt-1">
-                            <span className="truncate max-w-[150px] sm:max-w-[250px]">
-                              #{invoice.invoiceNumber}
-                            </span>
-                            <span className="mx-2 text-gray-300">•</span>
-                            <span>
-                              {formatCurrency(invoice.amount)}
-                            </span>
-                          </div>
+                          <Link to={`/invoices/${invoice.id}`} className="hover:text-blue-600">
+                            <h3 className="font-medium truncate max-w-[200px] sm:max-w-[300px]">
+                              {invoice.clientName}
+                            </h3>
+                            <div className="flex items-center text-sm text-gray-500 mt-1">
+                              <span className="truncate max-w-[150px] sm:max-w-[250px]">
+                                #{invoice.invoiceNumber}
+                              </span>
+                              <span className="mx-2 text-gray-300">•</span>
+                              <span>
+                                {formatCurrency(invoice.amount)}
+                              </span>
+                            </div>
+                          </Link>
                         </div>
 
                         <div className="flex flex-wrap gap-2 my-2 sm:my-0">
@@ -221,6 +225,16 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-gray-500"
+                            asChild
+                          >
+                            <Link to={`/invoices/${invoice.id}`}>
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-gray-500"
                             onClick={() => onSendReminder(invoice)}
                           >
                             <MailIcon className="h-4 w-4" />
@@ -243,7 +257,9 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <Link to={`/invoices/${invoice.id}`}>View Details</Link>
+                              </DropdownMenuItem>
                               <DropdownMenuItem>Mark as Paid</DropdownMenuItem>
                               <DropdownMenuItem className="text-red-600">
                                 Delete
