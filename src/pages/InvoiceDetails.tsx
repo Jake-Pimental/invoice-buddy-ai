@@ -16,6 +16,7 @@ import {
   X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -26,6 +27,8 @@ import { Invoice, AIMessage } from "@/types";
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/use-toast";
 import EditInvoiceForm from "@/components/EditInvoiceForm";
+import AIAssistant from "@/components/AIAssistant";
+import UploadInvoice from "@/components/UploadInvoice";
 
 const fetchInvoiceDetails = async (id: string): Promise<Invoice> => {
   const mockInvoices = [
@@ -131,6 +134,8 @@ const updateInvoice = async (invoice: Invoice): Promise<Invoice> => {
 const InvoiceDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   
   const { 
     data: invoice, 
@@ -163,10 +168,37 @@ const InvoiceDetails = () => {
   };
 
   const handleSendReminder = () => {
+    if (!invoice) return;
+    setIsAIAssistantOpen(true);
+  };
+
+  const handleUploadClick = () => {
+    setIsUploadOpen(true);
+  };
+
+  const handleUploadClose = () => {
+    setIsUploadOpen(false);
+  };
+
+  const handleUploadComplete = () => {
+    setIsUploadOpen(false);
     toast({
-      title: "Reminder sent",
-      description: "A payment reminder has been sent to the client.",
+      title: "Upload complete",
+      description: "Your invoice has been uploaded successfully.",
     });
+  };
+
+  const handleAssistantClose = () => {
+    setIsAIAssistantOpen(false);
+  };
+
+  const handleSendMessage = (message: Omit<AIMessage, "id" | "createdAt">) => {
+    toast({
+      title: "Message sent",
+      description: "Your message has been queued for delivery.",
+    });
+    
+    handleAssistantClose();
   };
 
   const handleEditClick = () => {
@@ -304,10 +336,20 @@ const InvoiceDetails = () => {
             </div>
             <div className="mt-4 md:mt-0 flex flex-wrap items-center gap-2">
               {!isEditing && (
-                <Button variant="outline" onClick={handleEditClick} className="mr-2">
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Invoice
-                </Button>
+                <>
+                  <Button onClick={handleUploadClick} className="mr-2 hidden sm:flex">
+                    <FileTextIcon className="h-4 w-4 mr-2" />
+                    Upload Invoice
+                  </Button>
+                  <Button onClick={handleSendReminder} className="mr-2 hidden sm:flex">
+                    <Mail className="h-4 w-4 mr-2" />
+                    Send Reminder
+                  </Button>
+                  <Button variant="outline" onClick={handleEditClick} className="mr-2">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Invoice
+                  </Button>
+                </>
               )}
               <Badge
                 variant="outline"
@@ -330,6 +372,22 @@ const InvoiceDetails = () => {
                 </Badge>
               )}
             </div>
+          </div>
+          
+          {/* Mobile action buttons */}
+          <div className="flex justify-between mt-4 gap-2 sm:hidden">
+            <Button onClick={handleUploadClick} className="flex-1">
+              <FileTextIcon className="h-4 w-4 mr-2" />
+              Upload
+            </Button>
+            <Button onClick={handleSendReminder} className="flex-1">
+              <Mail className="h-4 w-4 mr-2" />
+              Remind
+            </Button>
+            <Button onClick={() => {}} className="flex-1">
+              <Phone className="h-4 w-4 mr-2" />
+              Call
+            </Button>
           </div>
         </div>
 
@@ -588,6 +646,29 @@ const InvoiceDetails = () => {
           )}
         </div>
       </div>
+      
+      {/* Add the dialogs for Upload and AI Assistant */}
+      <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+        <DialogTrigger className="hidden" />
+        <DialogContent className="sm:max-w-[500px]">
+          <UploadInvoice 
+            onClose={handleUploadClose}
+            onUploadComplete={handleUploadComplete}
+          />
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isAIAssistantOpen} onOpenChange={setIsAIAssistantOpen}>
+        <DialogTrigger className="hidden" />
+        <DialogContent className="sm:max-w-[600px]">
+          <AIAssistant 
+            invoice={invoice}
+            previousMessages={messages || []}
+            onClose={handleAssistantClose}
+            onSendMessage={handleSendMessage}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
