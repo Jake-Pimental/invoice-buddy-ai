@@ -29,6 +29,7 @@ import {
   CheckCircleIcon,
   ClockIcon,
   Eye,
+  Edit,
 } from "lucide-react";
 import { format, isPast, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -259,6 +260,9 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem asChild>
                                 <Link to={`/invoices/${invoice.id}`}>View Details</Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <Link to={`/invoices/${invoice.id}?edit=true`}>Edit Invoice</Link>
                               </DropdownMenuItem>
                               <DropdownMenuItem>Mark as Paid</DropdownMenuItem>
                               <DropdownMenuItem className="text-red-600">

@@ -1,8 +1,20 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, Download, Mail, Phone, CheckCircle, Clock, AlertCircle, FileText, History } from "lucide-react";
+import { 
+  ChevronLeft, 
+  Download, 
+  Mail, 
+  Phone, 
+  CheckCircle, 
+  Clock, 
+  AlertCircle, 
+  FileText, 
+  History,
+  Edit,
+  Save,
+  X
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,10 +25,9 @@ import { format, parseISO, isPast } from "date-fns";
 import { Invoice, AIMessage } from "@/types";
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/use-toast";
+import EditInvoiceForm from "@/components/EditInvoiceForm";
 
-// Mock function to simulate fetching invoice data
 const fetchInvoiceDetails = async (id: string): Promise<Invoice> => {
-  // In a real app, this would make a fetch request to your API
   const mockInvoices = [
     {
       id: "inv-001",
@@ -73,9 +84,7 @@ const fetchInvoiceDetails = async (id: string): Promise<Invoice> => {
   });
 };
 
-// Mock function to fetch invoice communication history
 const fetchInvoiceMessages = async (invoiceId: string): Promise<AIMessage[]> => {
-  // In a real app, this would make a fetch request to your API
   const mockMessages = [
     {
       id: "msg-001",
@@ -111,10 +120,24 @@ const fetchInvoiceMessages = async (invoiceId: string): Promise<AIMessage[]> => 
   });
 };
 
+const updateInvoice = async (invoice: Invoice): Promise<Invoice> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(invoice);
+    }, 500);
+  });
+};
+
 const InvoiceDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const [isEditing, setIsEditing] = useState(false);
   
-  const { data: invoice, isLoading: isLoadingInvoice, error: invoiceError } = useQuery({
+  const { 
+    data: invoice, 
+    isLoading: isLoadingInvoice, 
+    error: invoiceError,
+    refetch 
+  } = useQuery({
     queryKey: ['invoice', id],
     queryFn: () => fetchInvoiceDetails(id || ''),
     enabled: !!id,
@@ -127,10 +150,16 @@ const InvoiceDetails = () => {
   });
 
   const handleMarkAsPaid = () => {
-    toast({
-      title: "Invoice marked as paid",
-      description: "The invoice has been marked as paid successfully.",
-    });
+    if (!invoice) return;
+    
+    updateInvoice({ ...invoice, status: 'paid' })
+      .then(() => {
+        refetch();
+        toast({
+          title: "Invoice marked as paid",
+          description: "The invoice has been marked as paid successfully.",
+        });
+      });
   };
 
   const handleSendReminder = () => {
@@ -138,6 +167,33 @@ const InvoiceDetails = () => {
       title: "Reminder sent",
       description: "A payment reminder has been sent to the client.",
     });
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  const handleSaveChanges = (updatedInvoice: Invoice) => {
+    updateInvoice(updatedInvoice)
+      .then(() => {
+        setIsEditing(false);
+        refetch();
+        toast({
+          title: "Invoice updated",
+          description: "The invoice has been updated successfully.",
+        });
+      })
+      .catch(error => {
+        toast({
+          title: "Update failed",
+          description: "There was an error updating the invoice.",
+          variant: "destructive"
+        });
+      });
   };
 
   const formatCurrency = (amount: number) => {
@@ -246,7 +302,13 @@ const InvoiceDetails = () => {
                 {invoice.description}
               </p>
             </div>
-            <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
+            <div className="mt-4 md:mt-0 flex flex-wrap items-center gap-2">
+              {!isEditing && (
+                <Button variant="outline" onClick={handleEditClick} className="mr-2">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Invoice
+                </Button>
+              )}
               <Badge
                 variant="outline"
                 className={cn(
@@ -275,241 +337,255 @@ const InvoiceDetails = () => {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle>Invoice Information</CardTitle>
+                <CardTitle>{isEditing ? "Edit Invoice" : "Invoice Information"}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Amount</h3>
-                    <p className="text-2xl font-semibold mt-1">{formatCurrency(invoice.amount)}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Client</h3>
-                    <p className="text-lg font-medium mt-1">{invoice.clientName}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Issue Date</h3>
-                    <p className="text-base mt-1">{format(parseISO(invoice.issueDate), "MMMM d, yyyy")}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Due Date</h3>
-                    <p className={cn(
-                      "text-base mt-1", 
-                      invoice.status === "overdue" || (invoice.status === "pending" && isOverdue(invoice.dueDate)) 
-                        ? "text-red-600 font-medium" 
-                        : ""
-                    )}>
-                      {format(parseISO(invoice.dueDate), "MMMM d, yyyy")}
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Email</h3>
-                    <p className="text-base mt-1">{invoice.clientEmail}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Phone</h3>
-                    <p className="text-base mt-1">{invoice.clientPhone || "Not provided"}</p>
-                  </div>
-                </div>
-
-                <Separator className="my-6" />
-
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Description</h3>
-                  <p className="text-base mt-2">{invoice.description}</p>
-                </div>
-
-                {invoice.notes && (
+                {isEditing ? (
+                  <EditInvoiceForm 
+                    invoice={invoice} 
+                    onCancel={handleCancelEdit} 
+                    onSave={handleSaveChanges} 
+                  />
+                ) : (
                   <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Amount</h3>
+                        <p className="text-2xl font-semibold mt-1">{formatCurrency(invoice.amount)}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Client</h3>
+                        <p className="text-lg font-medium mt-1">{invoice.clientName}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Issue Date</h3>
+                        <p className="text-base mt-1">{format(parseISO(invoice.issueDate), "MMMM d, yyyy")}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Due Date</h3>
+                        <p className={cn(
+                          "text-base mt-1", 
+                          invoice.status === "overdue" || (invoice.status === "pending" && isOverdue(invoice.dueDate)) 
+                            ? "text-red-600 font-medium" 
+                            : ""
+                        )}>
+                          {format(parseISO(invoice.dueDate), "MMMM d, yyyy")}
+                        </p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Email</h3>
+                        <p className="text-base mt-1">{invoice.clientEmail}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Phone</h3>
+                        <p className="text-base mt-1">{invoice.clientPhone || "Not provided"}</p>
+                      </div>
+                    </div>
+
                     <Separator className="my-6" />
+
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Notes</h3>
-                      <p className="text-base mt-2 text-gray-700">{invoice.notes}</p>
+                      <h3 className="text-sm font-medium text-gray-500">Description</h3>
+                      <p className="text-base mt-2">{invoice.description}</p>
+                    </div>
+
+                    {invoice.notes && (
+                      <>
+                        <Separator className="my-6" />
+                        <div>
+                          <h3 className="text-sm font-medium text-gray-500">Notes</h3>
+                          <p className="text-base mt-2 text-gray-700">{invoice.notes}</p>
+                        </div>
+                      </>
+                    )}
+
+                    <div className="mt-8 flex flex-wrap gap-3">
+                      {invoice.status !== 'paid' && (
+                        <>
+                          <Button onClick={handleMarkAsPaid} className="bg-green-600 hover:bg-green-700">
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Mark as Paid
+                          </Button>
+                          <Button onClick={handleSendReminder} variant="outline">
+                            <Mail className="h-4 w-4 mr-2" />
+                            Send Reminder
+                          </Button>
+                        </>
+                      )}
+                      <Button variant="outline">
+                        <Download className="h-4 w-4 mr-2" />
+                        Download PDF
+                      </Button>
+                      <Button variant="outline">
+                        <Phone className="h-4 w-4 mr-2" />
+                        Call Client
+                      </Button>
                     </div>
                   </>
                 )}
-
-                <div className="mt-8 flex flex-wrap gap-3">
-                  {invoice.status !== 'paid' && (
-                    <>
-                      <Button onClick={handleMarkAsPaid} className="bg-green-600 hover:bg-green-700">
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Mark as Paid
-                      </Button>
-                      <Button onClick={handleSendReminder} variant="outline">
-                        <Mail className="h-4 w-4 mr-2" />
-                        Send Reminder
-                      </Button>
-                    </>
-                  )}
-                  <Button variant="outline">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download PDF
-                  </Button>
-                  <Button variant="outline">
-                    <Phone className="h-4 w-4 mr-2" />
-                    Call Client
-                  </Button>
-                </div>
               </CardContent>
             </Card>
 
-            <Card className="mt-6">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2">
-                  <History className="h-5 w-5" />
-                  Communication History
-                </CardTitle>
-                <CardDescription>
-                  Previous reminders and messages sent to the client
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {isLoadingMessages ? (
-                  <div className="py-8 text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading messages...</p>
-                  </div>
-                ) : messages && messages.length > 0 ? (
-                  <div className="space-y-4">
-                    {messages.map((message) => (
-                      <div key={message.id} className="border border-gray-100 rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div className="flex gap-3">
-                            <Avatar>
-                              <Mail className="h-4 w-4" />
-                            </Avatar>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <p className="font-medium text-sm">Email Reminder</p>
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs bg-blue-50 text-blue-700 border-blue-100"
-                                >
-                                  {message.sentiment}
-                                </Badge>
+            {!isEditing && (
+              <Card className="mt-6">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2">
+                    <History className="h-5 w-5" />
+                    Communication History
+                  </CardTitle>
+                  <CardDescription>
+                    Previous reminders and messages sent to the client
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {isLoadingMessages ? (
+                    <div className="py-8 text-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+                      <p className="mt-4 text-gray-600">Loading messages...</p>
+                    </div>
+                  ) : messages && messages.length > 0 ? (
+                    <div className="space-y-4">
+                      {messages.map((message) => (
+                        <div key={message.id} className="border border-gray-100 rounded-lg p-4">
+                          <div className="flex justify-between items-start">
+                            <div className="flex gap-3">
+                              <Avatar>
+                                <Mail className="h-4 w-4" />
+                              </Avatar>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <p className="font-medium text-sm">Email Reminder</p>
+                                  <Badge
+                                    variant="outline"
+                                    className="text-xs bg-blue-50 text-blue-700 border-blue-100"
+                                  >
+                                    {message.sentiment}
+                                  </Badge>
+                                </div>
+                                <p className="text-xs text-gray-500">
+                                  Sent on {format(parseISO(message.createdAt), "MMMM d, yyyy")}
+                                </p>
                               </div>
-                              <p className="text-xs text-gray-500">
-                                Sent on {format(parseISO(message.createdAt), "MMMM d, yyyy")}
-                              </p>
                             </div>
+                            <Badge
+                              variant="outline"
+                              className="text-xs bg-green-50 text-green-700 border-green-100"
+                            >
+                              {message.deliveryStatus}
+                            </Badge>
                           </div>
-                          <Badge
-                            variant="outline"
-                            className="text-xs bg-green-50 text-green-700 border-green-100"
-                          >
-                            {message.deliveryStatus}
-                          </Badge>
+                          <p className="mt-3 text-gray-700 text-sm">{message.content}</p>
                         </div>
-                        <p className="mt-3 text-gray-700 text-sm">{message.content}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="py-8 text-center">
-                    <FileText className="h-12 w-12 text-gray-300 mx-auto" />
-                    <p className="mt-4 text-gray-600">No messages have been sent for this invoice yet.</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="py-8 text-center">
+                      <FileText className="h-12 w-12 text-gray-300 mx-auto" />
+                      <p className="mt-4 text-gray-600">No messages have been sent for this invoice yet.</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
 
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Payment Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-500">Subtotal</span>
-                    <span className="font-medium">{formatCurrency(invoice.amount)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-500">Tax</span>
-                    <span className="font-medium">$0.00</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between">
-                    <span className="text-base font-medium">Total</span>
-                    <span className="text-lg font-semibold">{formatCurrency(invoice.amount)}</span>
-                  </div>
-                  
-                  {invoice.status === 'partial' && (
-                    <>
-                      <Separator />
-                      <div className="flex justify-between text-green-600">
-                        <span className="text-sm font-medium">Paid</span>
-                        <span className="font-medium">{formatCurrency(invoice.amount * 0.5)}</span>
-                      </div>
-                      <div className="flex justify-between text-red-600">
-                        <span className="text-sm font-medium">Remaining</span>
-                        <span className="font-medium">{formatCurrency(invoice.amount * 0.5)}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {invoice.status !== 'paid' && (
-                  <div className="mt-6">
-                    <Button className="w-full">Send Payment Link</Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="mt-6">
-              <CardHeader className="pb-3">
-                <CardTitle>Activity Timeline</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="relative">
-                  <div className="absolute left-3 top-0 bottom-0 w-px bg-gray-200"></div>
-                  
-                  <div className="space-y-6">
-                    <div className="relative pl-10">
-                      <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                        <FileText className="h-3 w-3 text-blue-600" />
-                      </div>
-                      <p className="text-sm font-medium">Invoice created</p>
-                      <p className="text-xs text-gray-500">{format(parseISO(invoice.issueDate), "MMMM d, yyyy")}</p>
+          {!isEditing && (
+            <div className="lg:col-span-1">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle>Payment Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-500">Subtotal</span>
+                      <span className="font-medium">{formatCurrency(invoice.amount)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-500">Tax</span>
+                      <span className="font-medium">$0.00</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between">
+                      <span className="text-base font-medium">Total</span>
+                      <span className="text-lg font-semibold">{formatCurrency(invoice.amount)}</span>
                     </div>
                     
-                    {invoice.remindersSent > 0 && (
-                      <div className="relative pl-10">
-                        <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center">
-                          <Mail className="h-3 w-3 text-yellow-600" />
+                    {invoice.status === 'partial' && (
+                      <>
+                        <Separator />
+                        <div className="flex justify-between text-green-600">
+                          <span className="text-sm font-medium">Paid</span>
+                          <span className="font-medium">{formatCurrency(invoice.amount * 0.5)}</span>
                         </div>
-                        <p className="text-sm font-medium">First reminder sent</p>
-                        <p className="text-xs text-gray-500">{format(parseISO(invoice.lastContactDate || invoice.dueDate), "MMMM d, yyyy")}</p>
-                      </div>
-                    )}
-                    
-                    {invoice.status === 'paid' && (
-                      <div className="relative pl-10">
-                        <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                          <CheckCircle className="h-3 w-3 text-green-600" />
+                        <div className="flex justify-between text-red-600">
+                          <span className="text-sm font-medium">Remaining</span>
+                          <span className="font-medium">{formatCurrency(invoice.amount * 0.5)}</span>
                         </div>
-                        <p className="text-sm font-medium">Payment received</p>
-                        <p className="text-xs text-gray-500">August 30, 2023</p>
-                      </div>
-                    )}
-                    
-                    {invoice.status === 'overdue' && (
-                      <div className="relative pl-10">
-                        <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
-                          <AlertCircle className="h-3 w-3 text-red-600" />
-                        </div>
-                        <p className="text-sm font-medium">Invoice overdue</p>
-                        <p className="text-xs text-gray-500">{format(parseISO(invoice.dueDate), "MMMM d, yyyy")}</p>
-                      </div>
+                      </>
                     )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+
+                  {invoice.status !== 'paid' && (
+                    <div className="mt-6">
+                      <Button className="w-full">Send Payment Link</Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="mt-6">
+                <CardHeader className="pb-3">
+                  <CardTitle>Activity Timeline</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative">
+                    <div className="absolute left-3 top-0 bottom-0 w-px bg-gray-200"></div>
+                    
+                    <div className="space-y-6">
+                      <div className="relative pl-10">
+                        <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                          <FileText className="h-3 w-3 text-blue-600" />
+                        </div>
+                        <p className="text-sm font-medium">Invoice created</p>
+                        <p className="text-xs text-gray-500">{format(parseISO(invoice.issueDate), "MMMM d, yyyy")}</p>
+                      </div>
+                      
+                      {invoice.remindersSent > 0 && (
+                        <div className="relative pl-10">
+                          <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center">
+                            <Mail className="h-3 w-3 text-yellow-600" />
+                          </div>
+                          <p className="text-sm font-medium">First reminder sent</p>
+                          <p className="text-xs text-gray-500">{format(parseISO(invoice.lastContactDate || invoice.dueDate), "MMMM d, yyyy")}</p>
+                        </div>
+                      )}
+                      
+                      {invoice.status === 'paid' && (
+                        <div className="relative pl-10">
+                          <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                            <CheckCircle className="h-3 w-3 text-green-600" />
+                          </div>
+                          <p className="text-sm font-medium">Payment received</p>
+                          <p className="text-xs text-gray-500">August 30, 2023</p>
+                        </div>
+                      )}
+                      
+                      {invoice.status === 'overdue' && (
+                        <div className="relative pl-10">
+                          <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
+                            <AlertCircle className="h-3 w-3 text-red-600" />
+                          </div>
+                          <p className="text-sm font-medium">Invoice overdue</p>
+                          <p className="text-xs text-gray-500">{format(parseISO(invoice.dueDate), "MMMM d, yyyy")}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </div>
     </div>
