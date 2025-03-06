@@ -10,6 +10,19 @@ interface PreviousMessagesProps {
 const PreviousMessages = ({ messages }: PreviousMessagesProps) => {
   if (messages.length === 0) return null;
 
+  const getSentimentStyles = (sentiment: string) => {
+    switch (sentiment) {
+      case "friendly":
+        return "bg-green-50 text-green-600 border-green-100";
+      case "firm":
+        return "bg-blue-50 text-blue-600 border-blue-100";
+      case "urgent":
+        return "bg-orange-50 text-orange-600 border-orange-100";
+      default:
+        return "bg-gray-50 text-gray-600 border-gray-100";
+    }
+  };
+
   return (
     <div className="mt-4">
       <div className="flex items-center my-3">
@@ -26,13 +39,7 @@ const PreviousMessages = ({ messages }: PreviousMessagesProps) => {
               </span>
               <Badge 
                 variant="outline" 
-                className={
-                  msg.sentiment === "friendly" 
-                    ? "bg-green-50 text-green-600" 
-                    : msg.sentiment === "firm" 
-                    ? "bg-blue-50 text-blue-600" 
-                    : "bg-orange-50 text-orange-600"
-                }
+                className={getSentimentStyles(msg.sentiment)}
               >
                 {msg.sentiment}
               </Badge>
