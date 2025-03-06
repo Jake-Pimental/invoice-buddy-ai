@@ -10,6 +10,7 @@ import Invoices from "./pages/Invoices";
 import InvoiceDetails from "./pages/InvoiceDetails";
 import Analytics from "./pages/Analytics";
 import Workflow from "./pages/Workflow";
+import SmartInbox from "./pages/SmartInbox";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/invoices/:id" element={<InvoiceDetails />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/workflow" element={<Workflow />} />
+          <Route path="/inbox" element={<SmartInbox />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

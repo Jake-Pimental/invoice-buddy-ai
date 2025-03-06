@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ import {
   SearchIcon,
   Menu,
   X,
+  Inbox,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -85,6 +87,18 @@ const Header = ({ onUploadClick }: HeaderProps) => {
                 )}
               >
                 Clients
+              </Link>
+              <Link
+                to="/inbox"
+                className={cn(
+                  "transition-colors hover:text-blue-600",
+                  isActive("/inbox") ? "text-blue-600" : "text-gray-600"
+                )}
+              >
+                <div className="flex items-center">
+                  Inbox
+                  <div className="ml-1 bg-blue-100 text-blue-800 px-1.5 rounded-full text-xs">3</div>
+                </div>
               </Link>
               <Link
                 to="/analytics"
@@ -207,6 +221,19 @@ const Header = ({ onUploadClick }: HeaderProps) => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Clients
+            </Link>
+            <Link
+              to="/inbox"
+              className={cn(
+                "block py-2 px-3 text-base font-medium rounded-md hover:bg-gray-50",
+                isActive("/inbox") ? "text-blue-600 bg-blue-50" : ""
+              )}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <div className="flex items-center">
+                Inbox
+                <div className="ml-1 bg-blue-100 text-blue-800 px-1.5 rounded-full text-xs">3</div>
+              </div>
             </Link>
             <Link
               to="/analytics"

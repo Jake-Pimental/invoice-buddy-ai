@@ -31,3 +31,16 @@ export interface DashboardStats {
   collectionRate: number;
   averagePaymentTime: number;
 }
+
+export interface Message {
+  id: string;
+  invoiceId: string;
+  clientName: string;
+  type: 'email' | 'sms' | 'call';
+  direction: 'incoming' | 'outgoing';
+  content: string;
+  timestamp: string;
+  status: 'read' | 'unread';
+  sentiment?: 'positive' | 'neutral' | 'negative';
+  priority?: 'high' | 'medium' | 'low';
+}
