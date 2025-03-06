@@ -1,17 +1,26 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { Search, Mail, MessageSquare, PhoneCall, Filter, Clock, AlertCircle, Star } from 'lucide-react';
+import { Search, Mail, MessageSquare, PhoneCall, Filter, Clock, AlertCircle, Star, RefreshCw, Plus } from 'lucide-react';
 import { Message } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
+import { toast } from '@/components/ui/use-toast';
+import ComposeMessage from '@/components/inbox/ComposeMessage';
+import MessageDetail from '@/components/inbox/MessageDetail';
 
 const SmartInbox: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [selectedMessageIndex, setSelectedMessageIndex] = useState<number>(-1);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   
   // Mock data - in a real app, this would come from an API
   const mockMessages: Message[] = [
@@ -76,9 +85,29 @@ const SmartInbox: React.FC = () => {
       priority: 'high',
     },
   ];
+
+  // Initialize messages on component mount
+  useEffect(() => {
+    setMessages(mockMessages);
+  }, []);
+  
+  // Simulate refreshing messages from an API
+  const refreshMessages = () => {
+    setIsLoading(true);
+    
+    // Simulate API call with a delay
+    setTimeout(() => {
+      setMessages(mockMessages);
+      setIsLoading(false);
+      toast({
+        title: "Inbox refreshed",
+        description: "Your messages have been updated.",
+      });
+    }, 1000);
+  };
   
   // Filter messages based on active tab and search query
-  const filteredMessages = mockMessages
+  const filteredMessages = messages
     .filter(message => {
       if (activeTab === 'all') return true;
       if (activeTab === 'unread') return message.status === 'unread';
@@ -99,7 +128,7 @@ const SmartInbox: React.FC = () => {
     });
   
   // Get count of unread messages
-  const unreadCount = mockMessages.filter(msg => msg.status === 'unread').length;
+  const unreadCount = messages.filter(msg => msg.status === 'unread').length;
   
   // Function to render the appropriate icon based on message type
   const getMessageIcon = (type: 'email' | 'sms' | 'call') => {
@@ -135,6 +164,82 @@ const SmartInbox: React.FC = () => {
   const markAsRead = (id: string) => {
     // In a real app, this would update the database
     console.log(`Marking message ${id} as read`);
+    
+    setMessages(prevMessages => 
+      prevMessages.map(message => 
+        message.id === id 
+          ? { ...message, status: 'read' }
+          : message
+      )
+    );
+  };
+  
+  // Function to handle message click
+  const handleMessageClick = (message: Message, index: number) => {
+    setSelectedMessage(message);
+    setSelectedMessageIndex(index);
+    setIsDetailOpen(true);
+    
+    if (message.status === 'unread') {
+      markAsRead(message.id);
+    }
+  };
+  
+  // Function to handle navigating between messages
+  const handleNavigate = (direction: 'prev' | 'next') => {
+    const totalMessages = filteredMessages.length;
+    
+    if (totalMessages === 0 || selectedMessageIndex === -1) return;
+    
+    let newIndex;
+    if (direction === 'prev') {
+      newIndex = selectedMessageIndex > 0 ? selectedMessageIndex - 1 : totalMessages - 1;
+    } else {
+      newIndex = selectedMessageIndex < totalMessages - 1 ? selectedMessageIndex + 1 : 0;
+    }
+    
+    const newMessage = filteredMessages[newIndex];
+    setSelectedMessage(newMessage);
+    setSelectedMessageIndex(newIndex);
+    
+    if (newMessage.status === 'unread') {
+      markAsRead(newMessage.id);
+    }
+  };
+  
+  // Function to handle composing a new message
+  const handleCompose = () => {
+    setIsComposeOpen(true);
+  };
+  
+  // Function to handle replying to a message
+  const handleReply = (message: Message) => {
+    setIsDetailOpen(false);
+    setIsComposeOpen(true);
+  };
+  
+  // Function to handle adding a new message after sending
+  const handleMessageSent = () => {
+    // In a real app, this would refresh messages from the API
+    const newMessage: Message = {
+      id: `new-${Date.now()}`,
+      invoiceId: selectedMessage?.invoiceId || 'INV-NEW',
+      clientName: selectedMessage?.clientName || 'Client',
+      type: 'email',
+      direction: 'outgoing',
+      content: 'Your message has been sent.',
+      timestamp: new Date().toISOString(),
+      status: 'read',
+      sentiment: 'positive',
+      priority: 'medium',
+    };
+    
+    setMessages(prevMessages => [newMessage, ...prevMessages]);
+    
+    toast({
+      title: "Message sent",
+      description: "Your message has been sent successfully.",
+    });
   };
   
   return (
@@ -145,7 +250,7 @@ const SmartInbox: React.FC = () => {
           <p className="text-gray-500 mt-1">Track and manage all client communications</p>
         </div>
         
-        <div className="flex mt-4 md:mt-0 w-full md:w-auto">
+        <div className="flex mt-4 md:mt-0 w-full md:w-auto gap-2">
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
             <Input
@@ -156,8 +261,35 @@ const SmartInbox: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="outline" size="icon" className="ml-2" title="Filter messages">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="flex-shrink-0" 
+            title="Filter messages" 
+            onClick={() => toast({
+              title: "Coming soon",
+              description: "Advanced filtering will be available soon.",
+            })}
+          >
             <Filter className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="flex-shrink-0" 
+            title="Refresh inbox"
+            onClick={refreshMessages}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          </Button>
+          <Button 
+            variant="default" 
+            className="flex-shrink-0 gap-1"
+            onClick={handleCompose}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">Compose</span>
           </Button>
         </div>
       </div>
@@ -169,7 +301,7 @@ const SmartInbox: React.FC = () => {
               <TabsTrigger value="all" className="flex items-center gap-1">
                 All
                 <span className="text-xs bg-blue-100 text-blue-800 px-1.5 rounded-full">
-                  {mockMessages.length}
+                  {messages.length}
                 </span>
               </TabsTrigger>
               <TabsTrigger value="unread" className="flex items-center gap-1">
@@ -194,13 +326,13 @@ const SmartInbox: React.FC = () => {
                 </div>
               ) : (
                 <div className="divide-y">
-                  {filteredMessages.map((message) => (
+                  {filteredMessages.map((message, index) => (
                     <div 
                       key={message.id}
                       className={`py-4 px-2 hover:bg-gray-50 transition-colors cursor-pointer ${
                         message.status === 'unread' ? 'bg-blue-50/50' : ''
                       }`}
-                      onClick={() => markAsRead(message.id)}
+                      onClick={() => handleMessageClick(message, index)}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-3">
@@ -245,6 +377,13 @@ const SmartInbox: React.FC = () => {
                             size="icon"
                             className="h-8 w-8 text-gray-400 hover:text-yellow-500"
                             title="Mark as important"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toast({
+                                title: "Marked as important",
+                                description: "This message has been marked as important.",
+                              });
+                            }}
                           >
                             <Star className="h-4 w-4" />
                           </Button>
@@ -260,10 +399,37 @@ const SmartInbox: React.FC = () => {
       </Card>
       
       <div className="flex justify-center">
-        <Button variant="outline" className="w-full max-w-lg">
+        <Button 
+          variant="outline" 
+          className="w-full max-w-lg"
+          onClick={() => toast({
+            title: "Coming soon",
+            description: "Loading older messages will be available soon.",
+          })}
+        >
           Load More Messages
         </Button>
       </div>
+      
+      {/* Compose Message Dialog */}
+      <ComposeMessage 
+        isOpen={isComposeOpen}
+        onClose={() => setIsComposeOpen(false)}
+        onMessageSent={handleMessageSent}
+        clientName={selectedMessage?.clientName}
+        clientEmail={selectedMessage?.clientName?.toLowerCase().replace(/\s+/g, '.') + '@example.com'}
+        clientPhone="+1234567890"
+        invoiceId={selectedMessage?.invoiceId}
+      />
+      
+      {/* Message Detail Dialog */}
+      <MessageDetail 
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        message={selectedMessage}
+        onReply={handleReply}
+        onNavigate={handleNavigate}
+      />
     </div>
   );
 };
