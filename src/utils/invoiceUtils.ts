@@ -1,4 +1,3 @@
-
 import { parseISO, isPast, format } from "date-fns";
 import { Invoice } from "@/types";
 
@@ -155,4 +154,38 @@ export const updateInvoice = async (invoice: Invoice): Promise<Invoice> => {
       resolve(invoice);
     }, 500);
   });
+};
+
+export const generateAIReply = (
+  message: {
+    content: string;
+    sentiment: string;
+    subject: string;
+  }
+): {
+  id: string;
+  sender: string;
+  content: string;
+  createdAt: string;
+  subject: string;
+  sentiment: string;
+  deliveryStatus: string;
+} => {
+  let reply = "";
+  
+  if (message.sentiment === "urgent") {
+    reply = "I'm sorry, but I can't assist with that right now.";
+  } else {
+    reply = "I hope this message finds you well. I wanted to follow up on your invoice and provide some additional information.";
+  }
+
+  return {
+    id: Date.now().toString(),
+    sender: "AI Assistant",
+    content: reply,
+    createdAt: new Date().toISOString(),
+    subject: `Re: ${message.subject}`,
+    sentiment: message.sentiment === "urgent" ? "firm" : "friendly",
+    deliveryStatus: "sent",
+  };
 };

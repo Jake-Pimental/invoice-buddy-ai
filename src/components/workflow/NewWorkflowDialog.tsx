@@ -44,7 +44,7 @@ const NewWorkflowDialog: React.FC<NewWorkflowDialogProps> = ({
             <Input 
               id="name" 
               placeholder="e.g., 30-Day Collection Process" 
-              value={newWorkflow.name}
+              value={newWorkflow.name || ''}
               onChange={(e) => setNewWorkflow({...newWorkflow, name: e.target.value})}
             />
           </div>
@@ -53,7 +53,7 @@ const NewWorkflowDialog: React.FC<NewWorkflowDialogProps> = ({
             <Textarea 
               id="description" 
               placeholder="Describe the purpose of this workflow"
-              value={newWorkflow.description}
+              value={newWorkflow.description || ''}
               onChange={(e) => setNewWorkflow({...newWorkflow, description: e.target.value})}
             />
           </div>

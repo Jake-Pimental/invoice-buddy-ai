@@ -1,0 +1,26 @@
+
+/* React Flow custom styles */
+.react-flow__node {
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  text-align: left;
+}
+
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+}
+
+.react-flow__node-step {
+  min-width: 180px;
+}
+
+.react-flow__attribution {
+  display: none;
+}

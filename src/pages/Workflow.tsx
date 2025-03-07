@@ -8,6 +8,7 @@ import { Workflow as WorkflowType, WorkflowStep } from "@/types/workflow";
 import WorkflowList from "@/components/workflow/WorkflowList";
 import WorkflowDetail from "@/components/workflow/WorkflowDetail";
 import NewWorkflowDialog from "@/components/workflow/NewWorkflowDialog";
+import WorkflowFlow from "@/components/workflow/WorkflowFlow";
 
 const Workflow = () => {
   const [workflows, setWorkflows] = useState<WorkflowType[]>([
@@ -23,6 +24,8 @@ const Workflow = () => {
           description: "Extract data from invoice using OCR",
           type: "ocr",
           active: true,
+          triggerDays: 0,
+          messageTemplate: "Starting invoice data extraction process..."
         },
         {
           id: "step2",
@@ -30,6 +33,8 @@ const Workflow = () => {
           description: "Validate extracted information against client database",
           type: "validation",
           active: true,
+          triggerDays: 0,
+          messageTemplate: "Validating invoice data against records..."
         },
         {
           id: "step3",
@@ -37,6 +42,8 @@ const Workflow = () => {
           description: "Store processed invoice in document management system",
           type: "storage",
           active: true,
+          triggerDays: 1,
+          messageTemplate: "Archiving invoice to secure storage..."
         },
       ],
     },
@@ -52,6 +59,8 @@ const Workflow = () => {
           description: "Send automated welcome email to new client",
           type: "email",
           active: true,
+          triggerDays: 0,
+          messageTemplate: "Hello {{clientName}},\n\nWelcome to our service! We're excited to have you on board."
         },
         {
           id: "step2",
@@ -59,6 +68,8 @@ const Workflow = () => {
           description: "Create client profile in system",
           type: "profile",
           active: true,
+          triggerDays: 1,
+          messageTemplate: "Setting up new client profile..."
         },
       ],
     },
@@ -68,7 +79,7 @@ const Workflow = () => {
     workflows[0]
   );
   const [isNewWorkflowOpen, setIsNewWorkflowOpen] = useState(false);
-  const [newWorkflow, setNewWorkflow] = useState({
+  const [newWorkflow, setNewWorkflow] = useState<Partial<WorkflowType>>({
     name: "",
     description: "",
   });
@@ -77,13 +88,17 @@ const Workflow = () => {
     name: "",
     description: "",
     type: "email",
+    triggerDays: 0,
+    messageTemplate: ""
   });
 
   const handleCreateWorkflow = () => {
-    const createdWorkflow = {
+    if (!newWorkflow.name) return;
+    
+    const createdWorkflow: WorkflowType = {
       id: uuidv4(),
-      name: newWorkflow.name,
-      description: newWorkflow.description,
+      name: newWorkflow.name || "",
+      description: newWorkflow.description || "",
       active: false,
       steps: [],
     };
@@ -95,13 +110,15 @@ const Workflow = () => {
   };
 
   const handleCreateStep = () => {
-    if (!selectedWorkflow) return;
+    if (!selectedWorkflow || !newStep.name) return;
 
-    const createdStep = {
+    const createdStep: WorkflowStep = {
       id: uuidv4(),
       name: newStep.name || "",
       description: newStep.description || "",
       type: newStep.type || "email",
+      triggerDays: newStep.triggerDays || 0,
+      messageTemplate: newStep.messageTemplate || "",
       active: true,
     };
 
@@ -120,6 +137,8 @@ const Workflow = () => {
       name: "",
       description: "",
       type: "email",
+      triggerDays: 0,
+      messageTemplate: ""
     });
     setIsNewStepOpen(false);
   };
@@ -197,16 +216,53 @@ const Workflow = () => {
 
         <div className="md:col-span-2">
           {selectedWorkflow ? (
-            <WorkflowDetail
-              workflow={selectedWorkflow}
-              isNewStepOpen={isNewStepOpen}
-              setIsNewStepOpen={setIsNewStepOpen}
-              newStep={newStep}
-              setNewStep={setNewStep}
-              onCreateStep={handleCreateStep}
-              onToggleStepActive={handleToggleStepActive}
-              onToggleWorkflowActive={handleToggleWorkflowActive}
-            />
+            <>
+              <div className="bg-white rounded-lg shadow border p-6 mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-2xl font-medium">{selectedWorkflow.name}</h2>
+                    <p className="text-muted-foreground mt-1">
+                      {selectedWorkflow.description}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant={selectedWorkflow.active ? "outline" : "default"}
+                      onClick={() => handleToggleWorkflowActive(selectedWorkflow)}
+                    >
+                      {selectedWorkflow.active ? "Deactivate" : "Activate"}
+                    </Button>
+                  </div>
+                </div>
+                
+                {/* React Flow Visualization */}
+                {selectedWorkflow.steps.length > 0 ? (
+                  <WorkflowFlow workflow={selectedWorkflow} />
+                ) : (
+                  <div className="text-center py-8 border border-dashed rounded-lg bg-gray-50">
+                    <p className="text-muted-foreground">No steps added yet</p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-4"
+                      onClick={() => setIsNewStepOpen(true)}
+                    >
+                      Add Your First Step
+                    </Button>
+                  </div>
+                )}
+              </div>
+              
+              <WorkflowDetail
+                workflow={selectedWorkflow}
+                isNewStepOpen={isNewStepOpen}
+                setIsNewStepOpen={setIsNewStepOpen}
+                newStep={newStep}
+                setNewStep={setNewStep}
+                onCreateStep={handleCreateStep}
+                onToggleStepActive={handleToggleStepActive}
+                onToggleWorkflowActive={handleToggleWorkflowActive}
+              />
+            </>
           ) : (
             <div className="bg-white rounded-lg shadow border p-6 text-center">
               <h2 className="text-xl font-medium mb-2">No Workflow Selected</h2>
@@ -224,7 +280,7 @@ const Workflow = () => {
 
       <NewWorkflowDialog
         isOpen={isNewWorkflowOpen}
-        onClose={() => setIsNewWorkflowOpen(false)}
+        onOpenChange={setIsNewWorkflowOpen}
         newWorkflow={newWorkflow}
         setNewWorkflow={setNewWorkflow}
         onCreateWorkflow={handleCreateWorkflow}

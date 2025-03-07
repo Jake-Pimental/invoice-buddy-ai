@@ -5,7 +5,7 @@ export type WorkflowStep = {
   description: string;
   triggerDays: number;
   messageTemplate: string;
-  type: "email" | "sms" | "reminder";
+  type: "email" | "sms" | "reminder" | "ocr" | "validation" | "storage" | "profile";
   active: boolean;
 };
 

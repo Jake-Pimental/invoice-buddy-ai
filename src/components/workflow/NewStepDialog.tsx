@@ -45,7 +45,7 @@ const NewStepDialog: React.FC<NewStepDialogProps> = ({
               <Input 
                 id="step-name" 
                 placeholder="e.g., Final Reminder" 
-                value={newStep.name}
+                value={newStep.name || ''}
                 onChange={(e) => setNewStep({...newStep, name: e.target.value})}
               />
             </div>
@@ -55,7 +55,7 @@ const NewStepDialog: React.FC<NewStepDialogProps> = ({
                 id="trigger-days" 
                 type="number"
                 placeholder="7" 
-                value={newStep.triggerDays}
+                value={newStep.triggerDays || 0}
                 onChange={(e) => setNewStep({...newStep, triggerDays: parseInt(e.target.value)})}
               />
               <p className="text-xs text-muted-foreground">
@@ -68,7 +68,7 @@ const NewStepDialog: React.FC<NewStepDialogProps> = ({
             <Input 
               id="step-description" 
               placeholder="e.g., Sent 7 days after due date" 
-              value={newStep.description}
+              value={newStep.description || ''}
               onChange={(e) => setNewStep({...newStep, description: e.target.value})}
             />
           </div>
@@ -116,7 +116,7 @@ const NewStepDialog: React.FC<NewStepDialogProps> = ({
               id="message-template" 
               placeholder="Hello {{clientName}}, This is a reminder about invoice {{invoiceNumber}}..."
               className="h-32"
-              value={newStep.messageTemplate}
+              value={newStep.messageTemplate || ''}
               onChange={(e) => setNewStep({...newStep, messageTemplate: e.target.value})}
             />
             <p className="text-xs text-muted-foreground">
