@@ -3,6 +3,7 @@ import React from 'react';
 import { Mail, MessageSquare, PhoneCall, User } from 'lucide-react';
 import { Message } from '@/types';
 import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 
 interface MessageHeaderProps {

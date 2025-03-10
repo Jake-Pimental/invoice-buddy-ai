@@ -2,9 +2,8 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Message } from '@/types';
-import { Button } from '@/components/ui/button';
 
-// Import the new component files
+// Import the component files
 import MessageHeader from './message-detail/MessageHeader';
 import MessageTags from './message-detail/MessageTags';
 import MessageThread from './message-detail/MessageThread';
