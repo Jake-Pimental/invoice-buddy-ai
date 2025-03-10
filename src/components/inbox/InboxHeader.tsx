@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Filter, RefreshCw, Plus } from 'lucide-react';
+import { Search, Filter, RefreshCw, Plus, Layout } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
 interface InboxHeaderProps {
@@ -11,6 +11,9 @@ interface InboxHeaderProps {
   isLoading: boolean;
   refreshMessages: () => void;
   handleCompose: () => void;
+  pendingTasksCount: number;
+  toggleTasksPanel: () => void;
+  showTasksPanel: boolean;
 }
 
 const InboxHeader: React.FC<InboxHeaderProps> = ({
@@ -19,6 +22,9 @@ const InboxHeader: React.FC<InboxHeaderProps> = ({
   isLoading,
   refreshMessages,
   handleCompose,
+  pendingTasksCount,
+  toggleTasksPanel,
+  showTasksPanel,
 }) => {
   return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
@@ -59,6 +65,15 @@ const InboxHeader: React.FC<InboxHeaderProps> = ({
           disabled={isLoading}
         >
           <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+        </Button>
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="flex-shrink-0" 
+          title={showTasksPanel ? "Hide tasks panel" : "Show tasks panel"}
+          onClick={toggleTasksPanel}
+        >
+          <Layout className="h-4 w-4" />
         </Button>
         <Button 
           variant="default" 
