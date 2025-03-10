@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Invoice } from "@/types";
 import { cn } from "@/lib/utils";
-import { isOverdue } from "@/utils/invoiceUtils";
+import { isOverdue, formatCurrency } from "@/utils/invoiceUtils";
 import EditInvoiceForm from "@/components/EditInvoiceForm";
 
 interface InvoiceInformationProps {
@@ -45,11 +45,7 @@ const InvoiceInformation: React.FC<InvoiceInformationProps> = ({
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Amount</h3>
                 <p className="text-2xl font-semibold mt-1">
-                  {new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                    minimumFractionDigits: 2,
-                  }).format(invoice.amount)}
+                  {formatCurrency(invoice.amount)}
                 </p>
               </div>
               <div>
@@ -64,9 +60,7 @@ const InvoiceInformation: React.FC<InvoiceInformationProps> = ({
                 <h3 className="text-sm font-medium text-gray-500">Due Date</h3>
                 <p className={cn(
                   "text-base mt-1", 
-                  invoice.status === "overdue" || (invoice.status === "pending" && isOverdue(invoice.dueDate)) 
-                    ? "text-red-600 font-medium" 
-                    : ""
+                  isOverdue(invoice) ? "text-red-600 font-medium" : ""
                 )}>
                   {format(parseISO(invoice.dueDate), "MMMM d, yyyy")}
                 </p>

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft, Edit, Mail, Phone, FileText, Clock, AlertCircle, CheckCircle } from "lucide-react";
+import { ChevronLeft, Edit, Mail, Phone, FileText, Clock, AlertCircle, CheckCircle, PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Invoice } from "@/types";
@@ -24,10 +24,7 @@ const InvoiceHeader: React.FC<InvoiceHeaderProps> = ({
   onSendReminder
 }) => {
   const statusInfo = getStatusInfo(invoice.status);
-  const daysOverdue = invoice.status === "overdue" || 
-    (invoice.status === "pending" && isOverdue(invoice.dueDate))
-      ? getDaysOverdue(invoice.dueDate)
-      : 0;
+  const daysOverdue = isOverdue(invoice) ? getDaysOverdue(invoice) : 0;
 
   return (
     <div className="mb-6">
@@ -74,11 +71,11 @@ const InvoiceHeader: React.FC<InvoiceHeaderProps> = ({
             {statusInfo.icon === "Clock" && <Clock className="h-4 w-4 mr-1" />}
             {statusInfo.icon === "AlertCircle" && <AlertCircle className="h-4 w-4 mr-1" />}
             {statusInfo.icon === "CheckCircle" && <CheckCircle className="h-4 w-4 mr-1" />}
+            {statusInfo.icon === "PieChart" && <PieChart className="h-4 w-4 mr-1" />}
             {statusInfo.label}
           </Badge>
           
-          {(invoice.status === "overdue" || 
-            (invoice.status === "pending" && isOverdue(invoice.dueDate))) && (
+          {isOverdue(invoice) && (
             <Badge
               variant="outline"
               className="bg-red-50 text-red-700 border-red-100 text-sm px-3 py-1"
