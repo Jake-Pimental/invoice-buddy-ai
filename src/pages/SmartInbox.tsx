@@ -4,6 +4,7 @@ import { useInboxMessages } from '@/hooks/useInboxMessages';
 import InboxHeader from '@/components/inbox/InboxHeader';
 import InboxLayout from '@/components/inbox/InboxLayout';
 import InboxDialogs from '@/components/inbox/InboxDialogs';
+import { Message } from '@/types';
 
 const SmartInbox: React.FC = () => {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
