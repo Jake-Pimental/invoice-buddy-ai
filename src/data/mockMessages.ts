@@ -13,6 +13,8 @@ export const mockMessages: Message[] = [
     status: 'unread',
     sentiment: 'positive',
     priority: 'medium',
+    tags: ['payment', 'follow-up'],
+    summary: 'Client will process payment this week',
   },
   {
     id: '2',
@@ -25,6 +27,8 @@ export const mockMessages: Message[] = [
     status: 'unread',
     sentiment: 'positive',
     priority: 'high',
+    tags: ['payment', 'confirmation'],
+    summary: 'Payment sent, awaiting confirmation',
   },
   {
     id: '3',
@@ -37,6 +41,8 @@ export const mockMessages: Message[] = [
     status: 'read',
     sentiment: 'neutral',
     priority: 'medium',
+    tags: ['payment', 'delay', 'follow-up'],
+    summary: 'Payment delayed, promised by Friday',
   },
   {
     id: '4',
@@ -49,6 +55,8 @@ export const mockMessages: Message[] = [
     status: 'read',
     sentiment: 'positive',
     priority: 'low',
+    tags: ['payment', 'receipt', 'completed'],
+    summary: 'Payment received, receipt sent',
   },
   {
     id: '5',
@@ -61,6 +69,8 @@ export const mockMessages: Message[] = [
     status: 'read',
     sentiment: 'negative',
     priority: 'high',
+    tags: ['payment plan', 'negotiation'],
+    summary: 'Client requesting payment plan',
   },
 ];
 

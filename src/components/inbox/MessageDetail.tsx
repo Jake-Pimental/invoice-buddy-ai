@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Mail, MessageSquare, PhoneCall, ArrowLeft, ArrowRight, Calendar, User, CornerDownRight, Sparkles } from 'lucide-react';
-import { formatDistanceToNow, format } from 'date-fns';
+import { Mail, MessageSquare, PhoneCall, ArrowLeft, ArrowRight, Calendar, User, CornerDownRight, Sparkles, Tag, Plus } from 'lucide-react';
+import { format } from 'date-fns';
 import { Message } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { toast } from '@/components/ui/use-toast';
 
 interface MessageDetailProps {
   message: Message | null;
@@ -14,6 +16,8 @@ interface MessageDetailProps {
   onClose: () => void;
   onReply: (message: Message) => void;
   onNavigate: (direction: 'prev' | 'next') => void;
+  onAddTag: (tag: string) => void;
+  onRemoveTag: (tag: string) => void;
 }
 
 const MessageDetail: React.FC<MessageDetailProps> = ({
@@ -22,10 +26,13 @@ const MessageDetail: React.FC<MessageDetailProps> = ({
   onClose,
   onReply,
   onNavigate,
+  onAddTag,
+  onRemoveTag,
 }) => {
   const [showThread, setShowThread] = useState(true);
   const [quickReply, setQuickReply] = useState('');
   const [isGeneratingReply, setIsGeneratingReply] = useState(false);
+  const [newTag, setNewTag] = useState('');
   
   if (!message) return null;
 
@@ -122,6 +129,17 @@ const MessageDetail: React.FC<MessageDetailProps> = ({
     }, 1000);
   };
 
+  const handleAddTag = () => {
+    if (newTag.trim()) {
+      onAddTag(newTag.trim());
+      setNewTag('');
+      toast({
+        title: "Tag added",
+        description: `Tag "${newTag.trim()}" has been added to the message.`,
+      });
+    }
+  };
+
   const allThreadMessages = [...mockThread, message];
   
   return (
@@ -151,6 +169,51 @@ const MessageDetail: React.FC<MessageDetailProps> = ({
                 className="text-xs h-8"
               >
                 {showThread ? 'Hide Thread' : 'Show Thread'}
+              </Button>
+            </div>
+          </div>
+          
+          {/* Tags section */}
+          <div className="flex flex-wrap gap-2 items-center">
+            <Tag className="h-4 w-4 text-gray-500" />
+            {message.tags && message.tags.length > 0 ? (
+              message.tags.map((tag, index) => (
+                <Badge 
+                  key={index} 
+                  variant="outline" 
+                  className="px-2 py-1 flex items-center gap-1"
+                >
+                  {tag}
+                  <button 
+                    className="ml-1 text-gray-400 hover:text-gray-600"
+                    onClick={() => onRemoveTag(tag)}
+                  >
+                    ×
+                  </button>
+                </Badge>
+              ))
+            ) : (
+              <span className="text-sm text-gray-500">No tags</span>
+            )}
+            <div className="flex items-center gap-1 ml-2">
+              <Input
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                placeholder="New tag"
+                className="h-8 text-sm"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAddTag();
+                  }
+                }}
+              />
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="h-8 w-8"
+                onClick={handleAddTag}
+              >
+                <Plus className="h-4 w-4" />
               </Button>
             </div>
           </div>

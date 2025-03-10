@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { Mail, MessageSquare, PhoneCall, Star, Clock } from 'lucide-react';
+import { Mail, MessageSquare, PhoneCall, Star, Clock, Tag } from 'lucide-react';
 import { Message } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
 
 interface MessageListItemProps {
@@ -72,6 +73,20 @@ const MessageListItem: React.FC<MessageListItemProps> = ({ message, onClick }) =
             <p className="text-gray-700 line-clamp-2">
               {message.content}
             </p>
+            
+            {message.tags && message.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                <Tag className="h-3 w-3 text-gray-400" />
+                {message.tags.slice(0, 3).map((tag, index) => (
+                  <Badge key={index} variant="outline" className="px-1 py-0 text-xs">
+                    {tag}
+                  </Badge>
+                ))}
+                {message.tags.length > 3 && (
+                  <span className="text-xs text-gray-500">+{message.tags.length - 3} more</span>
+                )}
+              </div>
+            )}
             
             <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
               <div className="flex items-center">
