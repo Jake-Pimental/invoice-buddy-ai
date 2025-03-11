@@ -1,12 +1,16 @@
 
 import React, { useState } from 'react';
 import { useInboxMessages } from '@/hooks/useInboxMessages';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import InboxHeader from '@/components/inbox/InboxHeader';
 import InboxLayout from '@/components/inbox/InboxLayout';
 import InboxDialogs from '@/components/inbox/InboxDialogs';
 import { Message } from '@/types';
 
 const SmartInbox: React.FC = () => {
+  const navigate = useNavigate();
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [showTasksPanel, setShowTasksPanel] = useState(true);
@@ -56,6 +60,18 @@ const SmartInbox: React.FC = () => {
   
   return (
     <div className="container max-w-6xl mx-auto px-4 py-6">
+      <div className="mb-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/')}
+          className="text-gray-500 hover:text-gray-700 -ml-2"
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Back to Dashboard
+        </Button>
+      </div>
+      
       <InboxHeader 
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
