@@ -2,8 +2,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Search, Filter, RefreshCw, Plus, Layout } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface InboxHeaderProps {
   searchQuery: string;
@@ -44,45 +46,77 @@ const InboxHeader: React.FC<InboxHeaderProps> = ({
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="flex-shrink-0" 
-          title="Filter messages" 
-          onClick={() => toast({
-            title: "Coming soon",
-            description: "Advanced filtering will be available soon.",
-          })}
-        >
-          <Filter className="h-4 w-4" />
-        </Button>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="flex-shrink-0" 
-          title="Refresh inbox"
-          onClick={refreshMessages}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-        </Button>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="flex-shrink-0" 
-          title={showTasksPanel ? "Hide tasks panel" : "Show tasks panel"}
-          onClick={toggleTasksPanel}
-        >
-          <Layout className="h-4 w-4" />
-        </Button>
-        <Button 
-          variant="default" 
-          className="flex-shrink-0 gap-1"
-          onClick={handleCompose}
-        >
-          <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Compose</span>
-        </Button>
+        
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="flex-shrink-0" 
+                onClick={() => toast({
+                  title: "Coming soon",
+                  description: "Advanced filtering will be available soon.",
+                })}
+              >
+                <Filter className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Filter messages</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="flex-shrink-0" 
+                onClick={refreshMessages}
+                disabled={isLoading}
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Refresh inbox</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="flex-shrink-0 relative" 
+                onClick={toggleTasksPanel}
+              >
+                <Layout className="h-4 w-4" />
+                {pendingTasksCount > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-[10px]"
+                  >
+                    {pendingTasksCount}
+                  </Badge>
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{showTasksPanel ? "Hide tasks panel" : "Show tasks panel"}</p>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Button 
+            variant="default" 
+            className="flex-shrink-0 gap-1"
+            onClick={handleCompose}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">Compose</span>
+          </Button>
+        </TooltipProvider>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Message, TaskItem } from '@/types';
 import mockMessages from '@/data/mockMessages';
@@ -72,6 +71,17 @@ export const useInboxMessages = () => {
     setMessages(prevMessages => 
       prevMessages.map(message => 
         message.id === id 
+          ? { ...message, status: 'read' }
+          : message
+      )
+    );
+  };
+
+  // Function to mark all messages as read
+  const markAllAsRead = () => {
+    setMessages(prevMessages => 
+      prevMessages.map(message => 
+        message.status === 'unread'
           ? { ...message, status: 'read' }
           : message
       )
@@ -226,6 +236,7 @@ export const useInboxMessages = () => {
     handleTaskApprove,
     handleTaskReject,
     handleAddTag,
-    handleRemoveTag
+    handleRemoveTag,
+    markAllAsRead
   };
 };
