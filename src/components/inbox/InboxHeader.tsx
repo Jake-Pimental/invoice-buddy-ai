@@ -31,17 +31,17 @@ const InboxHeader: React.FC<InboxHeaderProps> = ({
   return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Smart Inbox</h1>
-        <p className="text-gray-500 mt-1">Track and manage all client communications</p>
+        <h1 className="text-2xl font-bold tracking-tight dark:text-white">Smart Inbox</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-1">Track and manage all client communications</p>
       </div>
       
       <div className="flex mt-4 md:mt-0 w-full md:w-auto gap-2">
         <div className="relative flex-1 md:w-64">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
           <Input
             type="search"
             placeholder="Search messages..."
-            className="pl-8"
+            className="pl-8 dark:bg-gray-800 dark:border-gray-700"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -53,7 +53,7 @@ const InboxHeader: React.FC<InboxHeaderProps> = ({
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="flex-shrink-0" 
+                className="flex-shrink-0 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700" 
                 onClick={() => toast({
                   title: "Coming soon",
                   description: "Advanced filtering will be available soon.",
@@ -72,7 +72,7 @@ const InboxHeader: React.FC<InboxHeaderProps> = ({
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="flex-shrink-0" 
+                className="flex-shrink-0 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700" 
                 onClick={refreshMessages}
                 disabled={isLoading}
               >
@@ -89,7 +89,7 @@ const InboxHeader: React.FC<InboxHeaderProps> = ({
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="flex-shrink-0 relative" 
+                className="flex-shrink-0 relative dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700" 
                 onClick={toggleTasksPanel}
               >
                 <Layout className="h-4 w-4" />

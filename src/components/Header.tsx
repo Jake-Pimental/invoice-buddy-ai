@@ -8,6 +8,7 @@ import Logo from "./header/Logo";
 import MobileMenu from "./header/MobileMenu";
 import DesktopNav from "./header/DesktopNav";
 import UserMenu from "./header/UserMenu";
+import DarkModeToggle from "./header/DarkModeToggle";
 
 interface HeaderProps {
   onUploadClick: () => void;
@@ -21,7 +22,7 @@ const Header = ({ onUploadClick }: HeaderProps) => {
   const unreadCount = 2;
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-gray-100 bg-white/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-30 w-full border-b border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-2">
           {isMobile && (
@@ -42,7 +43,7 @@ const Header = ({ onUploadClick }: HeaderProps) => {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="text-gray-600"
+              className="text-gray-600 dark:text-gray-300"
               title="Smart Inbox"
             >
               <Inbox className="h-5 w-5" />
@@ -53,6 +54,8 @@ const Header = ({ onUploadClick }: HeaderProps) => {
               )}
             </Button>
           </Link>
+          
+          <DarkModeToggle />
           
           {!isMobile && (
             <Button

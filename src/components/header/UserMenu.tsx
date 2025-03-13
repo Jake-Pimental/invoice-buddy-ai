@@ -22,7 +22,7 @@ const UserMenu = () => {
       <Button
         variant="ghost"
         size="icon"
-        className="relative text-gray-600"
+        className="relative text-gray-600 dark:text-gray-300"
         aria-label="Notifications"
       >
         <BellIcon className="h-5 w-5" />
@@ -38,7 +38,7 @@ const UserMenu = () => {
           >
             <Avatar className="h-8 w-8">
               <AvatarImage src="" alt="User" />
-              <AvatarFallback className="bg-blue-100 text-blue-600">
+              <AvatarFallback className="bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-blue-200">
                 JD
               </AvatarFallback>
             </Avatar>
@@ -56,7 +56,7 @@ const UserMenu = () => {
             <span>Help</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-600">
+          <DropdownMenuItem className="text-red-600 dark:text-red-400">
             <LogOutIcon className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>
