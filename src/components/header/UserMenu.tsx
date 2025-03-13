@@ -26,7 +26,7 @@ const UserMenu = () => {
         aria-label="Notifications"
       >
         <BellIcon className="h-5 w-5" />
-        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-blue-600" />
+        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-500" />
       </Button>
       
       <DropdownMenu>
@@ -44,19 +44,19 @@ const UserMenu = () => {
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
+        <DropdownMenuContent align="end" className="w-56 dark:bg-gray-800 dark:border-gray-700">
+          <DropdownMenuLabel className="dark:text-gray-200">My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator className="dark:border-gray-700" />
+          <DropdownMenuItem className="dark:text-gray-200 dark:focus:bg-gray-700">
             <SettingsIcon className="mr-2 h-4 w-4" />
             <span>Settings</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="dark:text-gray-200 dark:focus:bg-gray-700">
             <HelpCircleIcon className="mr-2 h-4 w-4" />
             <span>Help</span>
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-600 dark:text-red-400">
+          <DropdownMenuSeparator className="dark:border-gray-700" />
+          <DropdownMenuItem className="text-red-600 dark:text-red-400 dark:focus:bg-gray-700">
             <LogOutIcon className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>

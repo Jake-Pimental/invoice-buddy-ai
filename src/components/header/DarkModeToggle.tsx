@@ -63,8 +63,8 @@ const DarkModeToggle: React.FC = () => {
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
         </TooltipTrigger>
-        <TooltipContent>
-          <p>{darkMode ? "Switch to light mode" : "Switch to dark mode"}</p>
+        <TooltipContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+          <p className="text-gray-800 dark:text-gray-200">{darkMode ? "Switch to light mode" : "Switch to dark mode"}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
