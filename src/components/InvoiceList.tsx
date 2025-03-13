@@ -52,31 +52,31 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
     switch (status) {
       case "pending":
         return {
-          color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+          color: "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800/30",
           icon: <ClockIcon className="h-3.5 w-3.5 mr-1" />,
           label: "Pending",
         };
       case "overdue":
         return {
-          color: "bg-red-100 text-red-800 border-red-200",
+          color: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800/30",
           icon: <AlertCircleIcon className="h-3.5 w-3.5 mr-1" />,
           label: "Overdue",
         };
       case "paid":
         return {
-          color: "bg-green-100 text-green-800 border-green-200",
+          color: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800/30",
           icon: <CheckCircleIcon className="h-3.5 w-3.5 mr-1" />,
           label: "Paid",
         };
       case "partial":
         return {
-          color: "bg-blue-100 text-blue-800 border-blue-200",
+          color: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/30",
           icon: <ClockIcon className="h-3.5 w-3.5 mr-1" />,
           label: "Partial",
         };
       default:
         return {
-          color: "bg-gray-100 text-gray-800 border-gray-200",
+          color: "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700",
           icon: null,
           label: status,
         };
@@ -131,7 +131,7 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
             <TabsTrigger value="overdue">Overdue</TabsTrigger>
             <TabsTrigger value="paid">Paid</TabsTrigger>
           </TabsList>
-          <Separator />
+          <Separator className="dark:border-gray-700" />
         </div>
 
         <CardContent className="py-4">
@@ -147,7 +147,7 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                 buttonText="Upload Invoice"
                 onButtonClick={onUploadClick}
                 illustration={
-                  <FileTextIcon className="h-12 w-12 text-gray-300" />
+                  <FileTextIcon className="h-12 w-12 text-gray-300 dark:text-gray-600" />
                 }
               />
             ) : (
@@ -163,19 +163,19 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                   return (
                     <div
                       key={invoice.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-gray-100 hover:border-gray-200 hover:bg-gray-50/50 transition-all duration-200 ease-apple animate-slide-in-right"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-all duration-200 ease-apple animate-slide-in-right"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center">
                         <div className="mb-2 sm:mb-0 sm:mr-6">
-                          <Link to={`/invoices/${invoice.id}`} className="hover:text-blue-600">
-                            <h3 className="font-medium truncate max-w-[200px] sm:max-w-[300px]">
+                          <Link to={`/invoices/${invoice.id}`} className="hover:text-blue-600 dark:hover:text-blue-400">
+                            <h3 className="font-medium truncate max-w-[200px] sm:max-w-[300px] dark:text-white">
                               {invoice.clientName}
                             </h3>
-                            <div className="flex items-center text-sm text-gray-500 mt-1">
+                            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-1">
                               <span className="truncate max-w-[150px] sm:max-w-[250px]">
                                 #{invoice.invoiceNumber}
                               </span>
-                              <span className="mx-2 text-gray-300">•</span>
+                              <span className="mx-2 text-gray-300 dark:text-gray-600">•</span>
                               <span>
                                 {formatCurrency(invoice.amount)}
                               </span>
@@ -199,7 +199,7 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                           (invoice.status === "pending" && isOverdue(invoice.dueDate))) && (
                             <Badge
                               variant="outline"
-                              className="bg-red-50 text-red-700 border-red-100 text-xs"
+                              className="bg-red-50 text-red-700 border-red-100 text-xs dark:bg-red-900/30 dark:text-red-300 dark:border-red-800/30"
                             >
                               {daysOverdue} days overdue
                             </Badge>
@@ -208,7 +208,7 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                           {invoice.remindersSent > 0 && (
                             <Badge
                               variant="outline"
-                              className="bg-blue-50 text-blue-700 border-blue-100 text-xs"
+                              className="bg-blue-50 text-blue-700 border-blue-100 text-xs dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/30"
                             >
                               {invoice.remindersSent} reminder{invoice.remindersSent > 1 ? "s" : ""}
                             </Badge>
@@ -217,7 +217,7 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                       </div>
 
                       <div className="flex items-center justify-between sm:justify-end mt-3 sm:mt-0">
-                        <div className="flex sm:mr-4 text-sm text-gray-500">
+                        <div className="flex sm:mr-4 text-sm text-gray-500 dark:text-gray-400">
                           <span>Due: {format(parseISO(invoice.dueDate), "MMM d, yyyy")}</span>
                         </div>
 
@@ -225,7 +225,7 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-gray-500"
+                            className="h-8 w-8 text-gray-500 dark:text-gray-400 dark:hover:text-gray-300"
                             asChild
                           >
                             <Link to={`/invoices/${invoice.id}`}>
@@ -235,7 +235,7 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-gray-500"
+                            className="h-8 w-8 text-gray-500 dark:text-gray-400 dark:hover:text-gray-300"
                             onClick={() => onSendReminder(invoice)}
                           >
                             <MailIcon className="h-4 w-4" />
@@ -243,7 +243,7 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-gray-500"
+                            className="h-8 w-8 text-gray-500 dark:text-gray-400 dark:hover:text-gray-300"
                           >
                             <PhoneIcon className="h-4 w-4" />
                           </Button>
@@ -252,20 +252,20 @@ const InvoiceList = ({ invoices, onUploadClick, onSendReminder }: InvoiceListPro
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-gray-500"
+                                className="h-8 w-8 text-gray-500 dark:text-gray-400 dark:hover:text-gray-300"
                               >
                                 <MoreHorizontalIcon className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem asChild>
+                            <DropdownMenuContent align="end" className="dark:bg-gray-800 dark:border-gray-700">
+                              <DropdownMenuItem asChild className="dark:text-gray-200 dark:focus:bg-gray-700">
                                 <Link to={`/invoices/${invoice.id}`}>View Details</Link>
                               </DropdownMenuItem>
-                              <DropdownMenuItem asChild>
+                              <DropdownMenuItem asChild className="dark:text-gray-200 dark:focus:bg-gray-700">
                                 <Link to={`/invoices/${invoice.id}?edit=true`}>Edit Invoice</Link>
                               </DropdownMenuItem>
-                              <DropdownMenuItem>Mark as Paid</DropdownMenuItem>
-                              <DropdownMenuItem className="text-red-600">
+                              <DropdownMenuItem className="dark:text-gray-200 dark:focus:bg-gray-700">Mark as Paid</DropdownMenuItem>
+                              <DropdownMenuItem className="text-red-600 dark:text-red-400 dark:focus:bg-gray-700">
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>

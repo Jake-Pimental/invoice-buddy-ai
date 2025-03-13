@@ -44,28 +44,28 @@ const Dashboard = ({ stats }: DashboardProps) => {
         <StatCard
           title="Total Unpaid"
           value={formatCurrency(stats.totalUnpaid)}
-          icon={<DollarSignIcon className="h-5 w-5 text-blue-500" />}
+          icon={<DollarSignIcon className="h-5 w-5 text-blue-500 dark:text-blue-400" />}
           trend={{ value: 5.2, isPositive: false }}
         />
         
         <StatCard
           title="Overdue Invoices"
           value={formatCurrency(stats.totalOverdue)}
-          icon={<AlertTriangleIcon className="h-5 w-5 text-orange-500" />}
+          icon={<AlertTriangleIcon className="h-5 w-5 text-orange-500 dark:text-orange-400" />}
           trend={{ value: 2.1, isPositive: false }}
         />
         
         <StatCard
           title="Collected This Month"
           value={formatCurrency(stats.totalCollected)}
-          icon={<TrendingUpIcon className="h-5 w-5 text-green-500" />}
+          icon={<TrendingUpIcon className="h-5 w-5 text-green-500 dark:text-green-400" />}
           trend={{ value: 12.5, isPositive: true }}
         />
         
         <StatCard
           title="Avg. Payment Time"
           value={`${stats.averagePaymentTime} days`}
-          icon={<CalendarIcon className="h-5 w-5 text-purple-500" />}
+          icon={<CalendarIcon className="h-5 w-5 text-purple-500 dark:text-purple-400" />}
           trend={{ value: 3.2, isPositive: true }}
         />
       </div>
@@ -87,24 +87,26 @@ const Dashboard = ({ stats }: DashboardProps) => {
                     bottom: 20,
                   }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" opacity={0.1} />
                   <XAxis 
                     dataKey="name" 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: '#71717A' }}
+                    tick={{ fontSize: 12, fill: 'var(--foreground)' }}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: '#71717A' }}
+                    tick={{ fontSize: 12, fill: 'var(--foreground)' }}
                     tickFormatter={(value) => `$${value / 1000}k`}
                   />
                   <Tooltip 
                     formatter={(value) => [`${formatCurrency(value as number)}`, 'Amount']}
                     contentStyle={{ 
                       borderRadius: '8px', 
-                      border: '1px solid #E4E4E7',
+                      border: '1px solid var(--border)',
+                      backgroundColor: 'var(--background)',
+                      color: 'var(--foreground)',
                       boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)'
                     }}
                   />
@@ -128,16 +130,16 @@ const Dashboard = ({ stats }: DashboardProps) => {
             <div className="grid grid-cols-1 gap-6">
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Collection Rate</span>
-                  <span className="text-sm font-semibold">{stats.collectionRate}%</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Collection Rate</span>
+                  <span className="text-sm font-semibold dark:text-white">{stats.collectionRate}%</span>
                 </div>
-                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                   <div 
                     className="h-2 bg-blue-500 rounded-full" 
                     style={{ width: `${stats.collectionRate}%` }}
                   />
                 </div>
-                <div className="mt-1 text-xs text-gray-500 flex justify-between">
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 flex justify-between">
                   <span>Target: 85%</span>
                   <span>{stats.collectionRate < 85 ? 'Needs improvement' : 'On track'}</span>
                 </div>
@@ -145,16 +147,16 @@ const Dashboard = ({ stats }: DashboardProps) => {
               
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">AI Reminder Success Rate</span>
-                  <span className="text-sm font-semibold">76%</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">AI Reminder Success Rate</span>
+                  <span className="text-sm font-semibold dark:text-white">76%</span>
                 </div>
-                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                   <div 
                     className="h-2 bg-green-500 rounded-full" 
                     style={{ width: '76%' }}
                   />
                 </div>
-                <div className="mt-1 text-xs text-gray-500 flex justify-between">
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 flex justify-between">
                   <span>Industry avg: 62%</span>
                   <span>Above average</span>
                 </div>
@@ -162,16 +164,16 @@ const Dashboard = ({ stats }: DashboardProps) => {
               
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Days Sales Outstanding (DSO)</span>
-                  <span className="text-sm font-semibold">32 days</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Days Sales Outstanding (DSO)</span>
+                  <span className="text-sm font-semibold dark:text-white">32 days</span>
                 </div>
-                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                   <div 
                     className="h-2 bg-orange-500 rounded-full" 
                     style={{ width: '54%' }}
                   />
                 </div>
-                <div className="mt-1 text-xs text-gray-500 flex justify-between">
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 flex justify-between">
                   <span>Target: 30 days</span>
                   <span>Slightly high</span>
                 </div>
