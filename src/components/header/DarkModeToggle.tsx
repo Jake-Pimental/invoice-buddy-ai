@@ -57,7 +57,7 @@ const DarkModeToggle: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={toggleDarkMode}
-            className="text-gray-600 dark:text-gray-300"
+            className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

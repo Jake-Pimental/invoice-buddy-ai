@@ -90,43 +90,40 @@ const Dashboard = ({ stats }: DashboardProps) => {
                   <CartesianGrid 
                     strokeDasharray="3 3" 
                     vertical={false} 
-                    stroke="var(--border)" 
-                    opacity={0.4} 
+                    stroke="#E2E8F0" 
+                    opacity={0.7} 
                   />
                   <XAxis 
                     dataKey="name" 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: 'var(--foreground)' }}
+                    tick={{ fontSize: 12, fill: '#525252' }}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: 'var(--foreground)' }}
+                    tick={{ fontSize: 12, fill: '#525252' }}
                     tickFormatter={(value) => `$${value / 1000}k`}
                   />
                   <Tooltip 
-                    cursor={{ fill: 'var(--accent)' }}
-                    formatter={(value) => [`${formatCurrency(value as number)}`, 'Amount']}
+                    cursor={{ fill: 'rgba(236, 240, 243, 0.6)' }}
                     contentStyle={{ 
+                      backgroundColor: '#FFF',
                       borderRadius: '8px', 
-                      border: '1px solid var(--border)',
-                      backgroundColor: 'var(--background)',
-                      color: 'var(--foreground)',
-                      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)'
+                      border: '1px solid #E2E8F0',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+                      color: '#1A202C'
                     }}
+                    formatter={(value) => [`${formatCurrency(value as number)}`, 'Amount']}
                     labelStyle={{
-                      color: 'var(--foreground)',
                       fontWeight: 600,
-                      marginBottom: '4px'
-                    }}
-                    itemStyle={{
-                      color: 'var(--foreground)'
+                      marginBottom: '4px',
+                      color: '#1A202C'
                     }}
                   />
                   <Bar 
                     dataKey="amount" 
-                    fill="var(--primary)" 
+                    fill="#3B82F6" 
                     radius={[4, 4, 0, 0]}
                     barSize={isMobile ? 20 : 40}
                   />
@@ -145,7 +142,7 @@ const Dashboard = ({ stats }: DashboardProps) => {
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Collection Rate</span>
-                  <span className="text-sm font-semibold dark:text-white">{stats.collectionRate}%</span>
+                  <span className="text-sm font-semibold text-gray-800 dark:text-white">{stats.collectionRate}%</span>
                 </div>
                 <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                   <div 
@@ -162,7 +159,7 @@ const Dashboard = ({ stats }: DashboardProps) => {
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-300">AI Reminder Success Rate</span>
-                  <span className="text-sm font-semibold dark:text-white">76%</span>
+                  <span className="text-sm font-semibold text-gray-800 dark:text-white">76%</span>
                 </div>
                 <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                   <div 
@@ -179,7 +176,7 @@ const Dashboard = ({ stats }: DashboardProps) => {
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Days Sales Outstanding (DSO)</span>
-                  <span className="text-sm font-semibold dark:text-white">32 days</span>
+                  <span className="text-sm font-semibold text-gray-800 dark:text-white">32 days</span>
                 </div>
                 <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                   <div 
