@@ -22,7 +22,7 @@ const EmptyState = ({
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in">
       {illustration && (
-        <div className="mb-6 opacity-90">
+        <div className="mb-6 opacity-90 dark:opacity-80">
           {illustration}
         </div>
       )}

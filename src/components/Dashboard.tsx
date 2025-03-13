@@ -87,7 +87,12 @@ const Dashboard = ({ stats }: DashboardProps) => {
                     bottom: 20,
                   }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" opacity={0.1} />
+                  <CartesianGrid 
+                    strokeDasharray="3 3" 
+                    vertical={false} 
+                    stroke="var(--border)" 
+                    opacity={0.4} 
+                  />
                   <XAxis 
                     dataKey="name" 
                     axisLine={false}
@@ -101,6 +106,7 @@ const Dashboard = ({ stats }: DashboardProps) => {
                     tickFormatter={(value) => `$${value / 1000}k`}
                   />
                   <Tooltip 
+                    cursor={{ fill: 'var(--accent)' }}
                     formatter={(value) => [`${formatCurrency(value as number)}`, 'Amount']}
                     contentStyle={{ 
                       borderRadius: '8px', 
@@ -109,10 +115,18 @@ const Dashboard = ({ stats }: DashboardProps) => {
                       color: 'var(--foreground)',
                       boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)'
                     }}
+                    labelStyle={{
+                      color: 'var(--foreground)',
+                      fontWeight: 600,
+                      marginBottom: '4px'
+                    }}
+                    itemStyle={{
+                      color: 'var(--foreground)'
+                    }}
                   />
                   <Bar 
                     dataKey="amount" 
-                    fill="#3B82F6" 
+                    fill="var(--primary)" 
                     radius={[4, 4, 0, 0]}
                     barSize={isMobile ? 20 : 40}
                   />

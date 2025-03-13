@@ -18,8 +18,10 @@ const DesktopNav = () => {
         <Link
           to="/"
           className={cn(
-            "transition-colors hover:text-blue-600",
-            isActive("/") ? "text-blue-600" : "text-gray-600"
+            "transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+            isActive("/") 
+              ? "text-blue-600 dark:text-blue-400" 
+              : "text-gray-600 dark:text-gray-300"
           )}
         >
           Dashboard
@@ -27,8 +29,10 @@ const DesktopNav = () => {
         <Link
           to="/invoices"
           className={cn(
-            "transition-colors hover:text-blue-600",
-            isActive("/invoices") ? "text-blue-600" : "text-gray-600"
+            "transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+            isActive("/invoices") 
+              ? "text-blue-600 dark:text-blue-400" 
+              : "text-gray-600 dark:text-gray-300"
           )}
         >
           Invoices
@@ -36,8 +40,10 @@ const DesktopNav = () => {
         <Link
           to="/clients"
           className={cn(
-            "transition-colors hover:text-blue-600",
-            isActive("/clients") ? "text-blue-600" : "text-gray-600"
+            "transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+            isActive("/clients") 
+              ? "text-blue-600 dark:text-blue-400" 
+              : "text-gray-600 dark:text-gray-300"
           )}
         >
           Clients
@@ -45,20 +51,24 @@ const DesktopNav = () => {
         <Link
           to="/inbox"
           className={cn(
-            "transition-colors hover:text-blue-600",
-            isActive("/inbox") ? "text-blue-600" : "text-gray-600"
+            "transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+            isActive("/inbox") 
+              ? "text-blue-600 dark:text-blue-400" 
+              : "text-gray-600 dark:text-gray-300"
           )}
         >
           <div className="flex items-center">
             Inbox
-            <div className="ml-1 bg-blue-100 text-blue-800 px-1.5 rounded-full text-xs">3</div>
+            <div className="ml-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-1.5 rounded-full text-xs">3</div>
           </div>
         </Link>
         <Link
           to="/analytics"
           className={cn(
-            "transition-colors hover:text-blue-600",
-            isActive("/analytics") ? "text-blue-600" : "text-gray-600"
+            "transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+            isActive("/analytics") 
+              ? "text-blue-600 dark:text-blue-400" 
+              : "text-gray-600 dark:text-gray-300"
           )}
         >
           Analytics
@@ -66,8 +76,10 @@ const DesktopNav = () => {
         <Link
           to="/workflow"
           className={cn(
-            "transition-colors hover:text-blue-600",
-            isActive("/workflow") ? "text-blue-600" : "text-gray-600"
+            "transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+            isActive("/workflow") 
+              ? "text-blue-600 dark:text-blue-400" 
+              : "text-gray-600 dark:text-gray-300"
           )}
         >
           Workflow
@@ -75,11 +87,11 @@ const DesktopNav = () => {
       </div>
       
       <div className="relative hidden md:block">
-        <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+        <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
         <input
           type="search"
           placeholder="Search..."
-          className="w-64 rounded-md border border-gray-200 bg-white py-2 pl-8 pr-4 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          className="w-64 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-2 pl-8 pr-4 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:text-gray-200 dark:placeholder:text-gray-400"
         />
       </div>
     </>
